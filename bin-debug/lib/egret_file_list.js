@@ -120,6 +120,8 @@ var egret_file_list = [
 "core/extension/gui/components/Rect.js",
 "core/extension/gui/components/Button.js",
 "core/extension/gui/components/ToggleButton.js",
+"core/extension/gui/components/RadioButtonGroup.js",
+"core/extension/gui/components/RadioButton.js",
 "core/extension/gui/components/Group.js",
 "core/extension/gui/components/Skin.js",
 "core/extension/gui/components/DataGroup.js",
