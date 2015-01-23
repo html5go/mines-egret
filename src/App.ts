@@ -41,9 +41,9 @@ class App extends egret.DisplayObjectContainer{
   private onAddToStage(event:egret.Event){
     //注入自定义的素材解析器
     egret.Injector.mapClass("egret.gui.IAssetAdapter", AssetAdapter);
+
     //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
     egret.gui.Theme.load("resource/theme.thm");
-
 
     //设置加载进度界面
     this.loadingView  = new LoadingUI();
@@ -54,6 +54,7 @@ class App extends egret.DisplayObjectContainer{
         this.onConfigComplete,this);
     RES.loadConfig("resource/resource.json","resource/");
   }
+
   /**
    * 配置文件加载完成,开始预加载preload资源组。
    */
@@ -73,14 +74,14 @@ class App extends egret.DisplayObjectContainer{
    * preload资源组加载完成
    */
   private onResourceLoadComplete(event:RES.ResourceEvent):void {
-    if(event.groupName=="preload"){
+    if(event.groupName == "preload"){
       this.stage.removeChild(this.loadingView);
       RES.removeEventListener(RES.ResourceEvent.GROUP_COMPLETE, 
           this.onResourceLoadComplete, this);
       RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS,
           this.onResourceProgress, this);
 
-      this.createScene();
+      this.showTeamScene();
     }
   }
   /**
@@ -92,16 +93,12 @@ class App extends egret.DisplayObjectContainer{
     }
   }
 
-  // 创建 APP 场景
-  private createScene():void {
-    this.showTeamScene();
-  }
-
   /**
    * 创建团队展示场景(动画)，可建立通用组件
    * 后进入主游戏进入主
    */
   private appSky:egret.DisplayObjectContainer;
+
   private showTeamScene():void {
     var teamPoster:egret.Bitmap,
         teamName:egret.TextField;
@@ -116,18 +113,17 @@ class App extends egret.DisplayObjectContainer{
 
     teamName = new egret.TextField();
     teamName.text = "自由城出品";
-    teamName.x = 160;
-    teamName.y = 200;
-    teamName.textAlign = egret.HorizontalAlign.CENTER;
-    teamName.verticalAlign = egret.VerticalAlign.MIDDLE;
-    //teamName.alpha = 0;
+    teamName.width = 480;
+    teamName.y = 120;
+    teamName.textAlign = 'center';
+    teamName.alpha = 0;
     teamName.size = 30;
     teamName.textColor = 0x000000;
     teamName.rotation = 60;
     this.appSky.addChild(teamName);
 
     var tw = egret.Tween.get(teamName);
-    tw.to({rotation: 0}, 1200).wait(1000).call(this.startGame, this);
+    tw.to({rotation: 0, alpha: 1}, 1200).wait(1000).call(this.startGame, this);
   }
 
   private startGame():void {

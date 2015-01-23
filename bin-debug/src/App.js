@@ -65,7 +65,7 @@ var App = (function (_super) {
             this.stage.removeChild(this.loadingView);
             RES.removeEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onResourceLoadComplete, this);
             RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
-            this.createScene();
+            this.showTeamScene();
         }
     };
     /**
@@ -75,10 +75,6 @@ var App = (function (_super) {
         if (event.groupName == "preload") {
             this.loadingView.setProgress(event.itemsLoaded, event.itemsTotal);
         }
-    };
-    // 创建 APP 场景
-    App.prototype.createScene = function () {
-        this.showTeamScene();
     };
     App.prototype.showTeamScene = function () {
         var teamPoster, teamName;
@@ -90,17 +86,16 @@ var App = (function (_super) {
         this.appSky.addChild(teamPoster);
         teamName = new egret.TextField();
         teamName.text = "自由城出品";
-        teamName.x = 160;
-        teamName.y = 200;
-        teamName.textAlign = egret.HorizontalAlign.CENTER;
-        teamName.verticalAlign = egret.VerticalAlign.MIDDLE;
-        //teamName.alpha = 0;
+        teamName.width = 480;
+        teamName.y = 120;
+        teamName.textAlign = 'center';
+        teamName.alpha = 0;
         teamName.size = 30;
         teamName.textColor = 0x000000;
         teamName.rotation = 60;
         this.appSky.addChild(teamName);
         var tw = egret.Tween.get(teamName);
-        tw.to({ rotation: 0 }, 1200).wait(1000).call(this.startGame, this);
+        tw.to({ rotation: 0, alpha: 1 }, 1200).wait(1000).call(this.startGame, this);
     };
     App.prototype.startGame = function () {
         //游戏的主类开始实例化
