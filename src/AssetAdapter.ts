@@ -58,8 +58,6 @@ class AssetAdapter implements egret.gui.IAssetAdapter{
             else{
                RES.getResByUrl(source,onGetRes,this);
             }
-
-
         }
         else{
             compFunc.call(thisObject,content,source);

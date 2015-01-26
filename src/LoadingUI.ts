@@ -40,7 +40,32 @@ class LoadingUI extends egret.Sprite{
         this.textField.width = 480;
         this.textField.height = 100;
         this.textField.textAlign = "center";
+        this.showTeamScene();
     }
+
+    private showTeamScene():void {
+      var teamPoster:egret.Bitmap,
+          teamName:egret.TextField;
+
+      teamPoster = new egret.Bitmap();
+      teamPoster.texture = RES.getRes("teamImages");
+      this.addChild(teamPoster);
+
+      teamName = new egret.TextField();
+      teamName.text = "自由城出品";
+      teamName.x = 160;
+      teamName.y = 200;
+      teamName.textAlign = egret.HorizontalAlign.CENTER;
+      teamName.verticalAlign = egret.VerticalAlign.MIDDLE;
+      teamName.alpha = 0;
+      teamName.size = 30;
+      teamName.textColor = 0xffffff;
+      this.addChild(teamName);
+
+      var tw = egret.Tween.get(teamName);
+      tw.to({ alpha: 1}, 1200).wait(1000);
+    }
+
 
     public setProgress(current, total):void {
         this.textField.text = "资源加载中..." + current + "/" + total;

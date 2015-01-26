@@ -42,7 +42,7 @@ egret_native.egtMain = function () {
 
     context.run();
 
-    var document_class = "Main";
+    var document_class = "App";
     var rootClass;
     if(document_class){
         rootClass = egret.getDefinitionByName(document_class);

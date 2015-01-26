@@ -13,6 +13,7 @@ var skins;
             function RadioButtonSkin() {
                 _super.call(this);
                 this.__s = egret.gui.setProperties;
+                this.__s(this, ["height", "width"], [154, 239]);
                 this.elementsContent = [this.__10_i()];
                 this.states = [
                     new egret.gui.State("up", [
@@ -60,7 +61,7 @@ var skins;
             RadioButtonSkin.prototype.labelDisplay_i = function () {
                 var t = new egret.gui.Label();
                 this.labelDisplay = t;
-                this.__s(t, ["fontFamily", "maxDisplayedLines", "size", "textAlign", "textColor", "verticalAlign"], ["Tahoma", 1, 20, "center", 0x707070, "middle"]);
+                this.__s(t, ["fontFamily", "maxDisplayedLines", "size", "textAlign", "textColor", "verticalAlign"], ["Tahoma", 1, 20, "center", 0xffffff, "middle"]);
                 return t;
             };
             RadioButtonSkin.prototype.__10_i = function () {

@@ -28,6 +28,26 @@
 			},
 			{
 				"isFolder":false,
+				"key":"textbox_png",
+				"name":"textbox_png"
+			},
+			{
+				"isFolder":false,
+				"key":"togglebutton_over_png",
+				"name":"togglebutton_over_png"
+			},
+			{
+				"isFolder":false,
+				"key":"vscrollbtn_png",
+				"name":"vscrollbtn_png"
+			},
+			{
+				"isFolder":false,
+				"key":"vscrolltrack_png",
+				"name":"vscrolltrack_png"
+			},
+			{
+				"isFolder":false,
 				"key":"DropDownListButtonSkin_down_png",
 				"name":"DropDownListButtonSkin_down_png"
 			},
@@ -218,6 +238,11 @@
 			},
 			{
 				"isFolder":false,
+				"key":"teamImage",
+				"name":"teamImage"
+			},
+			{
+				"isFolder":false,
 				"key":"togglebutton_disabled_png",
 				"name":"togglebutton_disabled_png"
 			},
@@ -293,23 +318,8 @@
 			},
 			{
 				"isFolder":false,
-				"key":"textbox_png",
-				"name":"textbox_png"
-			},
-			{
-				"isFolder":false,
-				"key":"togglebutton_over_png",
-				"name":"togglebutton_over_png"
-			},
-			{
-				"isFolder":false,
-				"key":"vscrollbtn_png",
-				"name":"vscrollbtn_png"
-			},
-			{
-				"isFolder":false,
-				"key":"vscrolltrack_png",
-				"name":"vscrolltrack_png"
+				"key":"minesImage",
+				"name":"minesImage"
 			}]
 		}
 	},
