@@ -80,6 +80,6 @@ var egret;
             return TrackBaseEvent;
         })(egret.Event);
         gui.TrackBaseEvent = TrackBaseEvent;
-        TrackBaseEvent.prototype.__class__ = "gui.TrackBaseEvent";
+        TrackBaseEvent.prototype.__class__ = "egret.gui.TrackBaseEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

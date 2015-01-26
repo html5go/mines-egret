@@ -90,6 +90,6 @@ var egret;
             return RendererExistenceEvent;
         })(egret.Event);
         gui.RendererExistenceEvent = RendererExistenceEvent;
-        RendererExistenceEvent.prototype.__class__ = "gui.RendererExistenceEvent";
+        RendererExistenceEvent.prototype.__class__ = "egret.gui.RendererExistenceEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -43,28 +43,13 @@ var egret;
          */
         var OverrideBase = (function (_super) {
             __extends(OverrideBase, _super);
-            /**
-             * @method egret.gui.OverrideBase#constructor
-             */
             function OverrideBase() {
                 _super.call(this);
             }
-            /**
-             * @method egret.gui.OverrideBase#initialize
-             * @param parent {IStateClient}
-             */
             OverrideBase.prototype.initialize = function (parent) {
             };
-            /**
-             * @method egret.gui.OverrideBase#apply
-             * @param parent {IContainer}
-             */
             OverrideBase.prototype.apply = function (parent) {
             };
-            /**
-             * @method egret.gui.OverrideBase#remove
-             * @param parent {IContainer}
-             */
             OverrideBase.prototype.remove = function (parent) {
                 if (parent === null) {
                 }
@@ -84,6 +69,6 @@ var egret;
             return OverrideBase;
         })(egret.HashObject);
         gui.OverrideBase = OverrideBase;
-        OverrideBase.prototype.__class__ = "gui.OverrideBase";
+        OverrideBase.prototype.__class__ = "egret.gui.OverrideBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

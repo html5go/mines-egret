@@ -75,6 +75,6 @@ var egret;
             return CloseEvent;
         })(egret.Event);
         gui.CloseEvent = CloseEvent;
-        CloseEvent.prototype.__class__ = "gui.CloseEvent";
+        CloseEvent.prototype.__class__ = "egret.gui.CloseEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

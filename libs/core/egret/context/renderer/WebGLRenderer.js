@@ -35,7 +35,9 @@ var egret;
     /**
      * @class egret.WebGLRenderer
      * @classdesc
+     * WebGL的渲染类
      * @extends egret.RendererContext
+     * @private
      */
     var WebGLRenderer = (function (_super) {
         __extends(WebGLRenderer, _super);
@@ -55,6 +57,7 @@ var egret;
             this.canvas = canvas || this.createCanvas();
             this.canvas.addEventListener("webglcontextlost", this.handleContextLost.bind(this), false);
             this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored.bind(this), false);
+            this.onResize();
             this.projectionX = this.canvas.width / 2;
             this.projectionY = -this.canvas.height / 2;
             var numVerts = this.size * 4 * this.vertSize;
@@ -88,14 +91,23 @@ var egret;
                 var container = document.getElementById(egret.StageDelegate.canvas_div_name);
                 canvas = egret.Browser.getInstance().$new("canvas");
                 canvas.id = "egretCanvas";
-                canvas.width = egret.MainContext.instance.stage.stageWidth; //stageW
-                canvas.height = egret.MainContext.instance.stage.stageHeight; //stageH
-                canvas.style.width = container.style.width;
-                canvas.style.height = container.style.height;
-                //                canvas.style.position = "absolute";
                 container.appendChild(canvas);
             }
+            egret.MainContext.instance.stage.addEventListener(egret.Event.RESIZE, this.onResize, this);
             return canvas;
+        };
+        WebGLRenderer.prototype.onResize = function () {
+            //设置canvas宽高
+            if (this.canvas) {
+                var container = document.getElementById(egret.StageDelegate.canvas_div_name);
+                this.canvas.width = egret.MainContext.instance.stage.stageWidth; //stageW
+                this.canvas.height = egret.MainContext.instance.stage.stageHeight; //stageH
+                this.canvas.style.width = container.style.width;
+                this.canvas.style.height = container.style.height;
+                //              this.canvas.style.position = "absolute";
+                this.projectionX = this.canvas.width / 2;
+                this.projectionY = -this.canvas.height / 2;
+            }
         };
         WebGLRenderer.prototype.handleContextLost = function () {
             this.contextLost = true;
@@ -197,11 +209,14 @@ var egret;
             }
         };
         WebGLRenderer.prototype.drawRepeatImage = function (texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, repeat) {
+            var texture_scale_factor = egret.MainContext.instance.rendererContext.texture_scale_factor;
+            sourceWidth = sourceWidth * texture_scale_factor;
+            sourceHeight = sourceHeight * texture_scale_factor;
             for (var x = destX; x < destWidth; x += sourceWidth) {
                 for (var y = destY; y < destHeight; y += sourceHeight) {
                     var destW = Math.min(sourceWidth, destWidth - x);
                     var destH = Math.min(sourceHeight, destHeight - y);
-                    this.drawImage(texture, sourceX, sourceY, destW, destH, x, y, destW, destH);
+                    this.drawImage(texture, sourceX, sourceY, destW / texture_scale_factor, destH / texture_scale_factor, x, y, destW, destH);
                 }
             }
         };
@@ -214,11 +229,6 @@ var egret;
                 this.drawRepeatImage(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, repeat);
                 return;
             }
-            var texture_scale_factor = egret.MainContext.instance.rendererContext.texture_scale_factor;
-            sourceX = sourceX / texture_scale_factor;
-            sourceY = sourceY / texture_scale_factor;
-            sourceWidth = sourceWidth / texture_scale_factor;
-            sourceHeight = sourceHeight / texture_scale_factor;
             this.createWebGLTexture(texture);
             if (texture.webGLTexture !== this.currentBaseTexture || this.currentBatchSize >= this.size - 1) {
                 this._draw();
@@ -394,7 +404,8 @@ var egret;
                 }
             }
         };
-        WebGLRenderer.prototype.setupFont = function (textField) {
+        WebGLRenderer.prototype.setupFont = function (textField, style) {
+            if (style === void 0) { style = null; }
             var ctx = this.canvasContext;
             var font = textField.italic ? "italic " : "normal ";
             font += textField.bold ? "bold " : "normal ";

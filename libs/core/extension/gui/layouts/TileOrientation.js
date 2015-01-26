@@ -49,6 +49,6 @@ var egret;
             return TileOrientation;
         })();
         gui.TileOrientation = TileOrientation;
-        TileOrientation.prototype.__class__ = "gui.TileOrientation";
+        TileOrientation.prototype.__class__ = "egret.gui.TileOrientation";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

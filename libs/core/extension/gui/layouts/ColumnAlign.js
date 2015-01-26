@@ -54,6 +54,6 @@ var egret;
             return ColumnAlign;
         })();
         gui.ColumnAlign = ColumnAlign;
-        ColumnAlign.prototype.__class__ = "gui.ColumnAlign";
+        ColumnAlign.prototype.__class__ = "egret.gui.ColumnAlign";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

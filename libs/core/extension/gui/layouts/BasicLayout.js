@@ -75,53 +75,30 @@ var egret;
                 enumerable: true,
                 configurable: true
             });
-            /**
-             * @method egret.gui.BasicLayout#getElementBoundsLeftOfScrollRect
-             * @param scrollRect {Rectangle}
-             * @returns {Rectangle}
-             */
             BasicLayout.prototype.getElementBoundsLeftOfScrollRect = function (scrollRect) {
                 var bounds = new egret.Rectangle();
                 bounds.x = scrollRect.x - this._mouseWheelSpeed;
                 bounds.right = scrollRect.x;
                 return bounds;
             };
-            /**
-             * @method egret.gui.BasicLayout#getElementBoundsRightOfScrollRect
-             * @param scrollRect {Rectangle}
-             * @returns {Rectangle}
-             */
             BasicLayout.prototype.getElementBoundsRightOfScrollRect = function (scrollRect) {
                 var bounds = new egret.Rectangle();
                 bounds.x = scrollRect.right;
                 bounds.right = scrollRect.right + this._mouseWheelSpeed;
                 return bounds;
             };
-            /**
-             * @method egret.gui.BasicLayout#getElementBoundsAboveScrollRect
-             * @param scrollRect {Rectangle}
-             * @returns {Rectangle}
-             */
             BasicLayout.prototype.getElementBoundsAboveScrollRect = function (scrollRect) {
                 var bounds = new egret.Rectangle();
                 bounds.y = scrollRect.y - this._mouseWheelSpeed;
                 bounds.bottom = scrollRect.y;
                 return bounds;
             };
-            /**
-             * @method egret.gui.BasicLayout#getElementBoundsBelowScrollRect
-             * @param scrollRect {Rectangle}
-             * @returns {Rectangle}
-             */
             BasicLayout.prototype.getElementBoundsBelowScrollRect = function (scrollRect) {
                 var bounds = new egret.Rectangle();
                 bounds.y = scrollRect.bottom;
                 bounds.bottom = scrollRect.bottom + this._mouseWheelSpeed;
                 return bounds;
             };
-            /**
-             * @method egret.gui.BasicLayout#measure
-             */
             BasicLayout.prototype.measure = function () {
                 _super.prototype.measure.call(this);
                 if (this.target == null)
@@ -175,11 +152,6 @@ var egret;
                 this.target.measuredWidth = width;
                 this.target.measuredHeight = height;
             };
-            /**
-             * @method egret.gui.BasicLayout#updateDisplayList
-             * @param unscaledWidth {number}
-             * @param unscaledHeight {number}
-             */
             BasicLayout.prototype.updateDisplayList = function (unscaledWidth, unscaledHeight) {
                 _super.prototype.updateDisplayList.call(this, unscaledWidth, unscaledHeight);
                 if (this.target == null)
@@ -243,6 +215,6 @@ var egret;
             return BasicLayout;
         })(gui.LayoutBase);
         gui.BasicLayout = BasicLayout;
-        BasicLayout.prototype.__class__ = "gui.BasicLayout";
+        BasicLayout.prototype.__class__ = "egret.gui.BasicLayout";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

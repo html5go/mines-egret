@@ -42,9 +42,6 @@ var egret;
          */
         var List = (function (_super) {
             __extends(List, _super);
-            /**
-             * @method egret.gui.List#constructor
-             */
             function List() {
                 _super.call(this);
                 this._allowMultipleSelection = false;
@@ -53,12 +50,8 @@ var egret;
                  * 是否捕获ItemRenderer以便在MouseUp时抛出ItemClick事件
                  */
                 this._captureItemRenderer = true;
-                this.hostComponentKey = "egret.gui.List";
                 this.useVirtualLayout = true;
             }
-            /**
-             * @method egret.gui.List#createChildren
-             */
             List.prototype.createChildren = function () {
                 if (!this.itemRenderer)
                     this.itemRenderer = gui.DataGroup.defaultRendererFactory;
@@ -244,7 +237,6 @@ var egret;
             };
             /**
              * 提交多项选中项属性
-             * @method egret.gui.List#commitMultipleSelection
              */
             List.prototype.commitMultipleSelection = function () {
                 var removedItems = [];
@@ -289,10 +281,6 @@ var egret;
                     return this._selectedIndices.indexOf(index) != -1;
                 return _super.prototype._isItemIndexSelected.call(this, index);
             };
-            /**
-             * @method egret.gui.List#dataGroup_rendererAddHandler
-             * @param event {RendererExistenceEvent}
-             */
             List.prototype.dataGroup_rendererAddHandler = function (event) {
                 _super.prototype.dataGroup_rendererAddHandler.call(this, event);
                 var renderer = (event.renderer);
@@ -312,10 +300,6 @@ var egret;
                 }
                 _super.prototype.dataProviderRefreshed.call(this);
             };
-            /**
-             * @method egret.gui.List#dataGroup_rendererRemoveHandler
-             * @param event {RendererExistenceEvent}
-             */
             List.prototype.dataGroup_rendererRemoveHandler = function (event) {
                 _super.prototype.dataGroup_rendererRemoveHandler.call(this, event);
                 var renderer = (event.renderer);
@@ -425,6 +409,6 @@ var egret;
             return List;
         })(gui.ListBase);
         gui.List = List;
-        List.prototype.__class__ = "gui.List";
+        List.prototype.__class__ = "egret.gui.List";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

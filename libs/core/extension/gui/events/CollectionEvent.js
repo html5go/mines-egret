@@ -95,6 +95,6 @@ var egret;
             return CollectionEvent;
         })(egret.Event);
         gui.CollectionEvent = CollectionEvent;
-        CollectionEvent.prototype.__class__ = "gui.CollectionEvent";
+        CollectionEvent.prototype.__class__ = "egret.gui.CollectionEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

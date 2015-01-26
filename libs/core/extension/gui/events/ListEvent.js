@@ -117,6 +117,6 @@ var egret;
             return ListEvent;
         })(egret.TouchEvent);
         gui.ListEvent = ListEvent;
-        ListEvent.prototype.__class__ = "gui.ListEvent";
+        ListEvent.prototype.__class__ = "egret.gui.ListEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

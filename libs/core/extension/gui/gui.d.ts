@@ -636,18 +636,10 @@ declare module egret.gui {
         isEmpty(): boolean;
     }
     /**
-     * @class egret.gui.DepthBin
-     * @classdesc
      * 列表项
      */
     class DepthBin {
-        /**
-         * @member egret.DepthBin#length
-         */
         length: number;
-        /**
-         * @member egret.DepthBin#items
-         */
         items: any;
     }
 }
@@ -697,7 +689,7 @@ declare module egret.gui {
          * @param oldContent any 旧的内容对象,传入值有可能为null。
          * 对于某些类型素材，例如MovieClip，可以重用传入的显示对象,只修改其数据再返回。
          */
-        getAsset(source: any, compFunc: Function, thisObject: any, oldContent: any): void;
+        getAsset(source: any, compFunc: (content: any, source: any) => void, thisObject: any, oldContent: any): void;
     }
 }
 /**
@@ -1504,6 +1496,73 @@ declare module egret.gui {
  */
 declare module egret.gui {
     /**
+     * @class egret.gui.IStyleClient
+     * @interface
+     * @classdesc
+     * 能够设置样式的组件接口
+     */
+    interface IStyleClient {
+        /**
+         * 获取指定的名称的样式属性值
+         * @param styleProp 样式名称
+         */
+        getStyle(styleProp: String): any;
+        /**
+         * 对此组件实例设置样式属性。在此组件上设置的样式会覆盖父级容器的同名样式。
+         * @param styleProp 样式名称
+         * @param newValue 样式值
+         */
+        setStyle(styleProp: String, newValue: any): void;
+        /**
+         * 清除在此组件实例上设置过的指定样式名。
+         * @param styleProp 样式名称
+         */
+        clearStyle(styleProp: string): void;
+        /**
+         * 组件上的样式发生改变
+         * @param styleProp 发生改变的样式名称，若为null表示所有样式都发生了改变。
+         */
+        styleChanged(styleProp: string): void;
+        /**
+         * 通知项列表样式发生改变
+         * @param styleProp 样式名称
+         */
+        notifyStyleChangeInChildren(styleProp: string): void;
+        /**
+         * 重新生成自身以及所有子项的原型链
+         * @param parentChain
+         */
+        regenerateStyleCache(parentChain: any): void;
+    }
+}
+/**
+ * Copyright (c) 2014,Egret-Labs.org
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Egret-Labs.org nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY EGRET-LABS.ORG AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL EGRET-LABS.ORG AND CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+declare module egret.gui {
+    /**
      * @class egret.gui.IUIComponent
      * @interface
      * @classdesc
@@ -2068,13 +2127,11 @@ declare module egret.gui {
         private static initlized;
         /**
          * 初始化管理器
-         * @method egret.gui.UIGlobals._initlize
          * @param stage {Stage}
          */
         static _initlize(stage: Stage): void;
         /**
          * 延迟渲染布局管理器
-         * @member egret.gui.UIGlobals._layoutManager
          */
         static _layoutManager: LayoutManager;
         /**
@@ -2126,12 +2183,16 @@ declare module egret.gui {
      * @implements egret.gui.IInvalidating
      * @implements egret.gui.IVisualElement
      */
-    class UIComponent extends DisplayObjectContainer implements IUIComponent, ILayoutManagerClient, ILayoutElement, IInvalidating, IVisualElement {
+    class UIComponent extends DisplayObjectContainer implements IUIComponent, ILayoutManagerClient, ILayoutElement, IInvalidating, IVisualElement, IStyleClient {
         /**
          * 构造函数
          * @method egret.gui.UIComponent#constructor
          */
         constructor();
+        /**
+         * __proto__属性是否可以设置的标志，兼容IE9，IE10。
+         */
+        private static prototypeCanSet;
         /**
          * 添加到舞台
          */
@@ -2186,12 +2247,59 @@ declare module egret.gui {
          * 子项创建完成
          * @method egret.gui.UIComponent#childrenCreated
          */
-        private childrenCreated();
+        childrenCreated(): void;
         private _nestLevel;
         /**
          * @member egret.gui.UIComponent#nestLevel
          */
         nestLevel: number;
+        /**
+         * 更新子项的nestLevel属性
+         */
+        _updateChildrenNestLevel(): void;
+        /**
+         * 是否已经创建了自身的样式原型链
+         */
+        _hasOwnStyleChain: boolean;
+        /**
+         * 样式原型链引用
+         */
+        _styleProtoChain: any;
+        /**
+         * 获取指定的名称的样式属性值
+         */
+        getStyle(styleProp: string): any;
+        /**
+         * 对此组件实例设置样式属性。在此组件上设置的样式会覆盖父级容器的同名样式。推荐在子项较少的组件上使用，尽量避免在全局调用此方法，有可能造成性能问题。
+         */
+        setStyle(styleProp: string, newValue: any): void;
+        styleChanged(styleProp: string): void;
+        /**
+         * 一个性能优化的标志变量。某些子类可以设置为true显式表明自己不含有可设置样式的子项。
+         */
+        _hasNoStyleChild: boolean;
+        /**
+         * 通知子项列表样式发生改变
+         */
+        notifyStyleChangeInChildren(styleProp: string): void;
+        _createOwnStyleProtoChain(chain: any): void;
+        /**
+         * 创建一个原型链节点
+         */
+        private createProtoChain(parentChain);
+        /**
+         * 清除在此组件实例上设置过的指定样式名。
+         */
+        clearStyle(styleProp: string): void;
+        private static emptyStyleChain;
+        /**
+         * 重新生成自身以及所有子项的原型链
+         */
+        regenerateStyleCache(parentChain: any): void;
+        /**
+         * 兼容IE9，10的写法。
+         */
+        regenerateStyleCacheForIE(parentChain: any): void;
         /**
          * 添加对象到显示列表,此接口仅预留给框架内部使用
          * 如果需要管理子项，若有，请使用容器的addElement()方法，非法使用有可能造成无法自动布局。
@@ -2231,8 +2339,6 @@ declare module egret.gui {
         addChildAt(child: DisplayObject, index: number): DisplayObject;
         /**
          * 即将添加一个子项
-         * @method egret.gui.UIComponent#_addingChild
-         * @param child {DisplayObject}
          */
         _addingChild(child: DisplayObject): void;
         /**
@@ -2412,9 +2518,6 @@ declare module egret.gui {
          * 测量组件尺寸，返回尺寸是否发生变化
          */
         private measureSizes();
-        /**
-         * @member egret.gui.UIComponent#_invalidateDisplayListFlag
-         */
         _invalidateDisplayListFlag: boolean;
         /**
          * @method egret.gui.UIComponent#invalidateDisplayList
@@ -2424,9 +2527,6 @@ declare module egret.gui {
          * @method egret.gui.UIComponent#validateDisplayList
          */
         validateDisplayList(): void;
-        /**
-         * @member egret.gui.UIComponent#_validateNowFlag
-         */
         _validateNowFlag: boolean;
         /**
          * @method egret.gui.UIComponent#validateNow
@@ -2447,13 +2547,10 @@ declare module egret.gui {
         updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
         /**
          * 是否可以跳过测量尺寸阶段,返回true则不执行measure()方法
-         * @method egret.gui.UIComponent#canSkipMeasurement
-         * @returns {boolean}
          */
         canSkipMeasurement(): boolean;
         /**
          * 提交属性，子类在调用完invalidateProperties()方法后，应覆盖此方法以应用属性
-         * @method egret.gui.UIComponent#commitProperties
          */
         commitProperties(): void;
         /**
@@ -2721,15 +2818,12 @@ declare module egret.gui {
 declare module egret.gui {
     /**
      * @class egret.gui.ClassFactory
-     * @classdesc
+     * @classdesc ClassFactory 实例是一个“工厂对象”，Egret 可用其生成其他类的实例，每个实例拥有相同的属性。
      * @extends egret.HashObject
      */
     class ClassFactory extends HashObject {
         /**
          * @method egret.gui.ClassFactory#constructor
-         * @class egret.gui.ClassFactory
-         * @classdesc
-         * ClassFactory 实例是一个“工厂对象”，Egret 可用其生成其他类的实例，每个实例拥有相同的属性。
          * @param generator {any} newInstance() 方法根据工厂对象生成对象时使用的 Class。
          */
         constructor(generator?: any);
@@ -2875,24 +2969,9 @@ declare module egret.gui {
      * @implements egret.gui.IOverride
      */
     class OverrideBase extends HashObject implements IOverride {
-        /**
-         * @method egret.gui.OverrideBase#constructor
-         */
         constructor();
-        /**
-         * @method egret.gui.OverrideBase#initialize
-         * @param parent {IStateClient}
-         */
         initialize(parent: IStateClient): void;
-        /**
-         * @method egret.gui.OverrideBase#apply
-         * @param parent {IContainer}
-         */
         apply(parent: IContainer): void;
-        /**
-         * @method egret.gui.OverrideBase#remove
-         * @param parent {IContainer}
-         */
         remove(parent: IContainer): void;
         /**
          * 从对象初始化，这是一个便利方法
@@ -3071,6 +3150,84 @@ declare module egret.gui {
          * 设置属性值
          */
         private setPropertyValue(obj, name, value, valueForType);
+        /**
+         * 转成Boolean值
+         */
+        private toBoolean(value);
+    }
+}
+/**
+ * Copyright (c) 2014,Egret-Labs.org
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Egret-Labs.org nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY EGRET-LABS.ORG AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL EGRET-LABS.ORG AND CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+declare module egret.gui {
+    /**
+     * @class egret.gui.SetProperty
+     * @classdesc
+     * 设置属性
+     * @extends egret.gui.OverrideBase
+     */
+    class SetStyle extends OverrideBase {
+        /**
+         * 构造函数
+         * @method egret.gui.SetProperty#constructor
+         */
+        constructor(target: string, name: string, value: any);
+        /**
+         * 要修改的属性名
+         * @member egret.gui.SetProperty#name
+         */
+        name: string;
+        /**
+         * 目标实例名
+         * @member egret.gui.SetProperty#target
+         */
+        target: string;
+        /**
+         * 属性值
+         * @member egret.gui.SetProperty#value
+         */
+        value: any;
+        /**
+         * 旧的属性值
+         */
+        private oldValue;
+        /**
+         * @method egret.gui.SetProperty#apply
+         * @param parent {IContainer}
+         */
+        apply(parent: IContainer): void;
+        /**
+         * @method egret.gui.SetProperty#remove
+         * @param parent {IContainer}
+         */
+        remove(parent: IContainer): void;
+        /**
+         * 设置属性值
+         */
+        private setStyleValue(obj, name, value, valueForType);
         /**
          * 转成Boolean值
          */
@@ -3484,7 +3641,6 @@ declare module egret.gui {
         content: any;
         private createChildrenCalled;
         /**
-         * @method egret.gui.UIAsset#createChildren
          */
         createChildren(): void;
         /**
@@ -3510,28 +3666,24 @@ declare module egret.gui {
          */
         autoScale: boolean;
         /**
-         * @method egret.gui.UIAsset#updateDisplayList
          * @param unscaledWidth {number}
          * @param unscaledHeight {number}
          */
         updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
         _render(renderContext: RendererContext): void;
         /**
-         * @see egret.DisplayObject.measureBounds
          * @returns {Rectangle}
          * @private
          */
         _measureBounds(): Rectangle;
         private static errorStr;
         /**
-         * @method egret.gui.UIAsset#addChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
          */
         addChild(child: DisplayObject): DisplayObject;
         /**
-         * @method egret.gui.UIAsset#addChildAt
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
@@ -3539,35 +3691,30 @@ declare module egret.gui {
          */
         addChildAt(child: DisplayObject, index: number): DisplayObject;
         /**
-         * @method egret.gui.UIAsset#removeChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
          */
         removeChild(child: DisplayObject): DisplayObject;
         /**
-         * @method egret.gui.UIAsset#removeChildAt
          * @deprecated
          * @param index {number}
          * @returns {DisplayObject}
          */
         removeChildAt(index: number): DisplayObject;
         /**
-         * @method egret.gui.UIAsset#setChildIndex
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
          */
         setChildIndex(child: DisplayObject, index: number): void;
         /**
-         * @method egret.gui.UIAsset#swapChildren
          * @deprecated
          * @param child1 {DisplayObject}
          * @param child2 {DisplayObject}
          */
         swapChildren(child1: DisplayObject, child2: DisplayObject): void;
         /**
-         * @method egret.gui.UIAsset#swapChildrenAt
          * @deprecated
          * @param index1 {number}
          * @param index2 {number}
@@ -3610,7 +3757,7 @@ declare module egret.gui {
      * 并将皮肤的属性引用赋值到此类定义的同名属性(必须没有默认值)上,
      * 如果要对公共属性添加事件监听或其他操作，
      * 请覆盖partAdded()和partRemoved()方法
-     * @extends egret.gui.SkinnableComponent
+     * @extends egret.gui.UIComponent
      */
     class SkinnableComponent extends UIComponent implements ISkinnableClient {
         /**
@@ -4191,11 +4338,6 @@ declare module egret.gui {
          * @returns {string}
          */
         getCurrentSkinState(): string;
-        /**
-         * @method egret.gui.ButtonBase#partAdded
-         * @param partName {string}
-         * @param instance {any}
-         */
         partAdded(partName: string, instance: any): void;
     }
 }
@@ -4253,9 +4395,6 @@ declare module egret.gui {
          * 是否根据鼠标事件自动变换选中状态,默认true。仅框架内使用。
          */
         _autoSelected: boolean;
-        /**
-         * @method egret.gui.ToggleButtonBase#buttonReleased
-         */
         buttonReleased(): void;
     }
 }
@@ -4312,6 +4451,8 @@ declare module egret.gui {
          * 呈示此文本的内部 TextField
          */
         _textField: TextField;
+        private allStyleChanged;
+        styleChanged(styleProp: string): void;
         private fontFamilyChanged;
         private _fontFamily;
         /**
@@ -4320,14 +4461,12 @@ declare module egret.gui {
          */
         fontFamily: string;
         _sizeChanged: boolean;
-        _size: number;
+        private _size;
         /**
          * 字号大小,默认值30 。
          * @member egret.gui.TextBase#size
          */
         size: number;
-        _getFontSize(): number;
-        _setFontSize(value: number): void;
         _focusEnabled: boolean;
         focusEnabled: boolean;
         /**
@@ -4388,32 +4527,24 @@ declare module egret.gui {
          * @member egret.gui.TextBase#text
          */
         text: string;
-        /**
-         * @method egret.gui.TextBase#createChildren
-         */
+        _textFlow: ITextElement[];
+        _textFlowChanged: boolean;
+        textFlow: ITextElement[];
         createChildren(): void;
-        /**
-         * @method egret.gui.TextBase#commitProperties
-         */
         commitProperties(): void;
         /**
          * 检查是否创建了textField对象，没有就创建一个。
          */
         private checkTextField();
         _createTextField(): void;
-        /**
-         * @method egret.gui.TextBase#measure
-         */
         measure(): void;
         /**
          * 更新显示列表
-         * @method egret.gui.TextBase#$updateDisplayList
          * @param unscaledWidth {number}
          * @param unscaledHeight {number}
          */
         $updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
         /**
-         * @method egret.gui.TextBase#updateDisplayList
          * @param unscaledWidth {number}
          * @param unscaledHeight {number}
          */
@@ -4526,41 +4657,29 @@ declare module egret.gui {
         measure(): void;
         /**
          * 在更新显示列表时是否需要更新布局标志
-         * @member egret.gui.GroupBase#_layoutInvalidateDisplayListFlag
          */
         _layoutInvalidateDisplayListFlag: boolean;
         /**
          * 标记需要更新显示列表但不需要更新布局
-         * @method egret.gui.GroupBase#_invalidateDisplayListExceptLayout
          */
         _invalidateDisplayListExceptLayout(): void;
         /**
          * @method egret.gui.GroupBase#invalidateDisplayList
          */
         invalidateDisplayList(): void;
-        /**
-         * @method egret.gui.GroupBase#_childXYChanged
-         */
         _childXYChanged(): void;
         /**
          * 在测量尺寸时是否需要测量布局的标志
-         * @member egret.gui.GroupBase#_layoutInvalidateSizeFlag
          */
         _layoutInvalidateSizeFlag: boolean;
         /**
          * 标记需要更新显示列表但不需要更新布局
-         * @method egret.gui.GroupBase#_invalidateSizeExceptLayout
          */
         _invalidateSizeExceptLayout(): void;
         /**
          * @method egret.gui.GroupBase#invalidateSize
          */
         invalidateSize(): void;
-        /**
-         * @method egret.gui.GroupBase#updateDisplayList
-         * @param unscaledWidth {number}
-         * @param unscaledHeight {number}
-         */
         updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
         /**
          * 此容器中的可视元素的数量。
@@ -5865,6 +5984,25 @@ declare module egret.gui {
          * @method egret.gui.Button#constructor
          */
         constructor();
+        /**
+         * [SkinPart]按钮上的文本标签
+         * @member egret.gui.ButtonBase#labelDisplay
+         */
+        iconDisplay: UIAsset;
+        private _icon;
+        /**
+         * 要在按钮上显示的图标
+         * @member egret.gui.ButtonBase#icon
+         */
+        icon: any;
+        _getIcon(): any;
+        _setIcon(value: any): void;
+        /**
+         * @method egret.gui.ButtonBase#partAdded
+         * @param partName {string}
+         * @param instance {any}
+         */
+        partAdded(partName: string, instance: any): void;
     }
 }
 /**
@@ -5947,6 +6085,24 @@ declare module egret.gui {
          * @method egret.gui.ToggleButton#constructor
          */
         constructor();
+        /**
+         * [SkinPart]按钮上的文本标签
+         * @member egret.gui.ButtonBase#labelDisplay
+         */
+        iconDisplay: UIAsset;
+        private _icon;
+        /**
+         * 要在按钮上显示的图标
+         * @member egret.gui.ButtonBase#icon
+         */
+        icon: any;
+        _getIcon(): any;
+        _setIcon(value: any): void;
+        /**
+         * @param partName {string}
+         * @param instance {any}
+         */
+        partAdded(partName: string, instance: any): void;
     }
 }
 /**
@@ -6032,7 +6188,6 @@ declare module egret.gui {
         private static groupCount;
         /**
          * 组名
-         * @member egret.gui.RadioButtonGroup#_name
          */
         _name: string;
         /**
@@ -6071,13 +6226,11 @@ declare module egret.gui {
         getRadioButtonAt(index: number): RadioButton;
         /**
          * 添加单选按钮到组内
-         * @method egret.gui.RadioButtonGroup#_addInstance
          * @param instance {RadioButton}
          */
         _addInstance(instance: RadioButton): void;
         /**
          * 从组里移除单选按钮
-         * @method egret.gui.RadioButtonGroup#_removeInstance
          * @param instance {RadioButton}
          */
         _removeInstance(instance: RadioButton): void;
@@ -6087,7 +6240,6 @@ declare module egret.gui {
         private doRemoveInstance(instance, addListener?);
         /**
          * 设置选中的单选按钮
-         * @method egret.gui.RadioButtonGroup#_setSelection
          * @param value {RadioButton}
          * @param fireChange {boolean}
          */
@@ -6147,12 +6299,10 @@ declare module egret.gui {
         constructor();
         /**
          * 在RadioButtonGroup中的索引
-         * @member egret.gui.RadioButton#_indexNumber
          */
         _indexNumber: number;
         /**
          * 所属的RadioButtonGroup
-         * @member egret.gui.RadioButton#_radioButtonGroup
          */
         _radioButtonGroup: RadioButtonGroup;
         /**
@@ -6343,7 +6493,6 @@ declare module egret.gui {
         swapElementsAt(index1: number, index2: number): void;
         /**
          * 添加一个显示元素到容器
-         * @method egret.gui.Group#_elementAdded
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6351,7 +6500,6 @@ declare module egret.gui {
         _elementAdded(element: IVisualElement, index: number, notifyListeners?: boolean): void;
         /**
          * 从容器移除一个显示元素
-         * @method egret.gui.Group#_elementRemoved
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6359,14 +6507,12 @@ declare module egret.gui {
         _elementRemoved(element: IVisualElement, index: number, notifyListeners?: boolean): void;
         private static errorStr;
         /**
-         * @method egret.gui.Group#addChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
          */
         addChild(child: DisplayObject): DisplayObject;
         /**
-         * @method egret.gui.Group#addChildAt
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
@@ -6374,7 +6520,6 @@ declare module egret.gui {
          */
         addChildAt(child: DisplayObject, index: number): DisplayObject;
         /**
-         * @method egret.gui.Group#removeChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
@@ -6388,14 +6533,12 @@ declare module egret.gui {
          */
         removeChildAt(index: number): DisplayObject;
         /**
-         * @method egret.gui.Group#setChildIndex
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
          */
         setChildIndex(child: DisplayObject, index: number): void;
         /**
-         * @method egret.gui.Group#swapChildren
          * @deprecated
          * @param child1 {DisplayObject}
          * @param child2 {DisplayObject}
@@ -6464,6 +6607,7 @@ declare module egret.gui {
         createAllChildren: boolean;
         private _selectedChild;
         /**
+         * 当前选中的子项
          * @member egret.gui.ViewStack#selectedChild
          */
         selectedChild: IVisualElement;
@@ -6477,6 +6621,7 @@ declare module egret.gui {
         private proposedSelectedIndex;
         _selectedIndex: number;
         /**
+         * 当前选中子项的索引
          * @member egret.gui.ViewStack#selectedIndex
          */
         selectedIndex: number;
@@ -6490,7 +6635,6 @@ declare module egret.gui {
         _setSelectedIndex(value: number, notifyListeners?: boolean): void;
         /**
          * 添加一个显示元素到容器
-         * @method egret.gui.ViewStack#_elementAdded
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6498,7 +6642,6 @@ declare module egret.gui {
         _elementAdded(element: IVisualElement, index: number, notifyListeners?: boolean): void;
         /**
          * 从容器移除一个显示元素
-         * @method egret.gui.ViewStack#_elementRemoved
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6508,23 +6651,19 @@ declare module egret.gui {
          * 子项显示列表顺序发生改变。
          */
         private childOrderingChanged;
-        /**
-         * @method egret.gui.ViewStack#commitProperties
-         */
         commitProperties(): void;
         private commitSelection(newIndex);
         /**
+         * 子项数量
          * @member egret.gui.ViewStack#length
          */
         length: number;
         /**
-         * @method egret.gui.ViewStack#getItemAt
          * @param index {number}
          * @returns {any}
          */
         getItemAt(index: number): any;
         /**
-         * @method egret.gui.ViewStack#getItemIndex
          * @param item {any}
          * @returns {number}
          */
@@ -6565,8 +6704,7 @@ declare module egret.gui {
     /**
      * @class egret.gui.Skin
      * @classdesc
-     * 含有视图状态功能的皮肤基类。注意：为了减少嵌套层级，此皮肤没有继承显示对象，若需要显示对象版本皮肤，请使用Skin。
-     * @see org.flexlite.domUI.components.supportClasses.Skin
+     * 含有视图状态功能的皮肤基类。
      * @extends egret.EventDispatcher
      * @implements egret.gui.IStateClient
      * @implements egret.gui.ISkin
@@ -6622,13 +6760,7 @@ declare module egret.gui {
          * @member egret.gui.Skin#measuredHeight
          */
         measuredHeight: number;
-        /**
-         * @member egret.gui.Skin#preferredWidth
-         */
         preferredWidth: number;
-        /**
-         * @member egret.gui.Skin#preferredHeight
-         */
         preferredHeight: number;
         private _initialized;
         /**
@@ -6706,7 +6838,6 @@ declare module egret.gui {
         setElementIndex(element: IVisualElement, index: number): void;
         /**
          * 添加一个显示元素到容器
-         * @method egret.gui.Skin#_elementAdded
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6714,7 +6845,6 @@ declare module egret.gui {
         _elementAdded(element: IVisualElement, index: number, notifyListeners?: boolean): void;
         /**
          * 从容器移除一个显示元素
-         * @method egret.gui.Skin#_elementRemoved
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}
@@ -6788,6 +6918,66 @@ declare module egret.gui {
          * @method egret.StateClientHelper#initializeStates
          */
         initializeStates(): void;
+    }
+}
+/**
+ * Copyright (c) 2014,Egret-Labs.org
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Egret-Labs.org nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY EGRET-LABS.ORG AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL EGRET-LABS.ORG AND CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+declare module egret.gui {
+    /**
+     * @class egret.gui.StateSkin
+     * @classdesc
+     * 按钮组件的快速皮肤模板，能够快速制定哪个状态显示那个资源，实例化一次性专用的按钮皮肤。
+     * @extends egret.gui.Skin
+     */
+    class ButtonSkin extends Skin {
+        /**
+         * 构造函数
+         * @method egret.gui.StateSkin#constructor
+         * @param upSkinName {any} 按钮弹起状态的要显示的资源名
+         * @param downSkinName {any} 按钮按下状态的要显示的资源名
+         * @param disabledSkinName {any} 按钮禁用状态的要显示的资源名
+         */
+        constructor(upSkinName?: any, downSkinName?: any, disabledSkinName?: any);
+        private static _skinParts;
+        skinParts: string[];
+        private stateMap;
+        private backgroundAsset;
+        labelDisplay: Label;
+        iconDisplay: UIAsset;
+        /**
+         * @inheritDoc
+         */
+        createChildren(): void;
+        /**
+         * @inheritDoc
+         */
+        commitCurrentState(): void;
+        measure(): void;
+        updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
     }
 }
 /**
@@ -7215,64 +7405,53 @@ declare module egret.gui {
          */
         elementsContent: any[];
         /**
-         * @member egret.gui.SkinnableContainer#numElements
          */
         numElements: number;
         /**
-         * @method egret.gui.SkinnableContainer#getElementAt
          * @param index {number}
          * @returns {IVisualElement}
          */
         getElementAt(index: number): IVisualElement;
         /**
-         * @method egret.gui.SkinnableContainer#addElement
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         addElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.SkinnableContainer#addElementAt
          * @param element {IVisualElement}
          * @param index {number}
          * @returns {IVisualElement}
          */
         addElementAt(element: IVisualElement, index: number): IVisualElement;
         /**
-         * @method egret.gui.SkinnableContainer#removeElement
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         removeElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.SkinnableContainer#removeElementAt
          * @param index {number}
          * @returns {IVisualElement}
          */
         removeElementAt(index: number): IVisualElement;
         /**
-         * @method egret.gui.SkinnableContainer#removeAllElements
          */
         removeAllElements(): void;
         /**
-         * @method egret.gui.SkinnableContainer#getElementIndex
          * @param element {IVisualElement}
          * @returns {number}
          */
         getElementIndex(element: IVisualElement): number;
         /**
-         * @method egret.gui.SkinnableContainer#setElementIndex
          * @param element {IVisualElement}
          * @param index {number}
          */
         setElementIndex(element: IVisualElement, index: number): void;
         /**
-         * @method egret.gui.SkinnableContainer#swapElements
          * @param element1 {IVisualElement}
          * @param element2 {IVisualElement}
          */
         swapElements(element1: IVisualElement, element2: IVisualElement): void;
         /**
-         * @method egret.gui.SkinnableContainer#swapElementsAt
          * @param index1 {number}
          * @param index2 {number}
          */
@@ -7287,27 +7466,21 @@ declare module egret.gui {
          */
         layout: LayoutBase;
         /**
-         * @method egret.gui.SkinnableContainer#partAdded
          * @param partName {string}
          * @param instance {any}
          */
         partAdded(partName: string, instance: any): void;
         /**
-         * @method egret.gui.SkinnableContainer#partRemoved
          * @param partName {string}
          * @param instance {any}
          */
         partRemoved(partName: string, instance: any): void;
         /**
          * 容器添加元素事件
-         * @method egret.gui.SkinnableContainer#_contentGroup_elementAddedHandler
-         * @param event {ElementExistenceEvent}
          */
         _contentGroup_elementAddedHandler(event: ElementExistenceEvent): void;
         /**
          * 容器移除元素事件
-         * @method egret.gui.SkinnableContainer#_contentGroup_elementRemovedHandler
-         * @param event {ElementExistenceEvent}
          */
         _contentGroup_elementRemovedHandler(event: ElementExistenceEvent): void;
     }
@@ -7550,12 +7723,10 @@ declare module egret.gui {
         _getSelectedIndex(): number;
         /**
          * 是否允许自定义的选中项
-         * @member egret.gui.ListBase#_allowCustomSelectedItem
          */
         _allowCustomSelectedItem: boolean;
         /**
          * 索引改变后是否需要抛出事件
-         * @member egret.gui.ListBase#_dispatchChangeAfterSelection
          */
         _dispatchChangeAfterSelection: boolean;
         /**
@@ -7752,11 +7923,6 @@ declare module egret.gui {
          * @member egret.gui.Panel#title
          */
         title: string;
-        /**
-         * @method egret.gui.Panel#partAdded
-         * @param partName {string}
-         * @param instance {any}
-         */
         partAdded(partName: string, instance: any): void;
     }
 }
@@ -7827,7 +7993,6 @@ declare module egret.gui {
          */
         autoBackToStage: boolean;
         /**
-         * @method egret.gui.TitleWindow#partAdded
          * @param partName {string}
          * @param instance {any}
          */
@@ -8110,26 +8275,13 @@ declare module egret.gui {
          * @param unscaledHeight {number}
          */
         updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
-        /**
-         * @method egret.gui.ProgressBar#partAdded
-         * @param partName {string}
-         * @param instance {any}
-         */
         partAdded(partName: string, instance: any): void;
-        /**
-         * @method egret.gui.ProgressBar#partRemoved
-         * @param partName {string}
-         * @param instance {any}
-         */
         partRemoved(partName: string, instance: any): void;
         private trackResizedOrMoved;
         /**
          * track的位置或尺寸发生改变
          */
         private onTrackResizeOrMove(event);
-        /**
-         * @method egret.gui.ProgressBar#commitProperties
-         */
         commitProperties(): void;
         /**
          * 更新皮肤部件大小和可见性。
@@ -8232,16 +8384,7 @@ declare module egret.gui {
          * @method egret.gui.HSlider#constructor
          */
         constructor();
-        /**
-         * @method egret.gui.HSlider#pointToValue
-         * @param x {number}
-         * @param y {number}
-         * @returns {number}
-         */
         pointToValue(x: number, y: number): number;
-        /**
-         * @method egret.gui.HSlider#updateSkinDisplayList
-         */
         updateSkinDisplayList(): void;
     }
 }
@@ -8328,14 +8471,12 @@ declare module egret.gui {
          */
         constructor();
         /**
-         * @method egret.gui.VSlider#pointToValue
          * @param x {number}
          * @param y {number}
          * @returns {number}
          */
         pointToValue(x: number, y: number): number;
         /**
-         * @method egret.gui.VSlider#updateSkinDisplayList
          */
         updateSkinDisplayList(): void;
     }
@@ -8419,13 +8560,7 @@ declare module egret.gui {
      * @extends egret.gui.ListBase
      */
     class List extends ListBase {
-        /**
-         * @method egret.gui.List#constructor
-         */
         constructor();
-        /**
-         * @method egret.gui.List#createChildren
-         */
         createChildren(): void;
         /**
          * 是否使用虚拟布局,默认true
@@ -8477,23 +8612,14 @@ declare module egret.gui {
         private isValidIndex(item, index, v);
         /**
          * 提交多项选中项属性
-         * @method egret.gui.List#commitMultipleSelection
          */
         commitMultipleSelection(): void;
         _isItemIndexSelected(index: number): boolean;
-        /**
-         * @method egret.gui.List#dataGroup_rendererAddHandler
-         * @param event {RendererExistenceEvent}
-         */
         dataGroup_rendererAddHandler(event: RendererExistenceEvent): void;
         /**
          * 数据源发生刷新
          */
         dataProviderRefreshed(): void;
-        /**
-         * @method egret.gui.List#dataGroup_rendererRemoveHandler
-         * @param event {RendererExistenceEvent}
-         */
         dataGroup_rendererRemoveHandler(event: RendererExistenceEvent): void;
         /**
          * 是否捕获ItemRenderer以便在MouseUp时抛出ItemClick事件
@@ -8993,15 +9119,10 @@ declare module egret.gui {
         updateLabelDisplay(displayItem?: any): void;
         /**
          * 改变高亮的选中项
-         * @method egret.gui.DropDownListBase#_changeHighlightedSelection
          * @param newIndex {number}
          * @param scrollToTop {boolean}
          */
         _changeHighlightedSelection(newIndex: number, scrollToTop?: boolean): void;
-        /**
-         * @method egret.gui.DropDownListBase#dataProvider_collectionChangeHandler
-         * @param event {CollectionEvent}
-         */
         dataProvider_collectionChangeHandler(event: CollectionEvent): void;
         /**
          * @method egret.gui.DropDownListBase#item_mouseDownHandler
@@ -9010,14 +9131,10 @@ declare module egret.gui {
         item_mouseDownHandler(event: TouchEvent): void;
         /**
          * 控制器抛出打开列表事件
-         * @method egret.gui.DropDownListBase#_dropDownController_openHandler
-         * @param event {UIEvent}
          */
         _dropDownController_openHandler(event: UIEvent): void;
         /**
          * 打开列表后组件一次失效验证全部完成
-         * @method egret.gui.DropDownListBase#_open_updateCompleteHandler
-         * @param event {UIEvent}
          */
         _open_updateCompleteHandler(event: UIEvent): void;
         /**
@@ -9210,10 +9327,6 @@ declare module egret.gui {
          * @param instance {any}
          */
         partAdded(partName: string, instance: any): void;
-        /**
-         * @method egret.gui.DropDownList#updateLabelDisplay
-         * @param displayItem {any}
-         */
         updateLabelDisplay(displayItem?: any): void;
     }
 }
@@ -9252,9 +9365,6 @@ declare module egret.gui {
      * @implements egret.gui.IItemRenderer
      */
     class TabBarButton extends ToggleButtonBase implements IItemRenderer {
-        /**
-         * @method egret.gui.TabBarButton#constructor
-         */
         constructor();
         private _allowDeselection;
         /**
@@ -9277,9 +9387,6 @@ declare module egret.gui {
          * @inheritDoc
          */
         _setLabel(value: string): void;
-        /**
-         * @method egret.gui.TabBarButton#buttonReleased
-         */
         buttonReleased(): void;
     }
 }
@@ -9326,11 +9433,16 @@ declare module egret.gui {
          * requireSelection改变标志
          */
         private requireSelectionChanged_tabBar;
+        private _touchBeginItem;
+        /**
+         * 是否捕获ItemRenderer以便在MouseUp时抛出ItemClick事件
+         */
+        _captureItemRenderer: boolean;
         /**
          * @method egret.gui.TabBar#c
-         * @param value {boolea}
+         * @param value {boolean}
          */
-        c(value: boolean): void;
+        requireSelection: boolean;
         /**
          * @inheritDoc
          */
@@ -9343,24 +9455,21 @@ declare module egret.gui {
          * ViewStack选中项发生改变
          */
         private onViewStackIndexChange(event);
-        /**
-         * @method egret.gui.TabBar#commitProperties
-         */
         commitProperties(): void;
-        /**
-         * @method egret.gui.TabBar#dataGroup_rendererAddHandler
-         * @param event {RendererExistenceEvent}
-         */
         dataGroup_rendererAddHandler(event: RendererExistenceEvent): void;
-        /**
-         * @method egret.gui.TabBar#dataGroup_rendererRemoveHandler
-         * @param event {RendererExistenceEvent}
-         */
         dataGroup_rendererRemoveHandler(event: RendererExistenceEvent): void;
         /**
          * 鼠标在条目上按下
          */
-        private item_clickHandler(event);
+        private item_touchBeginHandler(event);
+        /**
+         * 鼠标在项呈示器上弹起，抛出ItemClick事件。
+         */
+        private item_touchEndHandler(event);
+        /**
+         * 鼠标在舞台上弹起
+         */
+        private stage_touchEndHandler(event);
     }
 }
 /**
@@ -9411,15 +9520,12 @@ declare module egret.gui {
          * [SkinPart]垂直滚动条
          */
         verticalScrollBar: VScrollBar;
-        hBar: HScrollBar;
-        vBar: VScrollBar;
         _scroller: ScrollView;
         /**
          * @method egret.gui.Scroller#measure
          */
         measure(): void;
         /**
-         * @method egret.gui.Scroller#updateDisplayList
          * @param unscaledWidth {number}
          * @param unscaledHeight {number}
          */
@@ -9451,6 +9557,7 @@ declare module egret.gui {
          * 卸载视域组件
          */
         private uninstallViewport();
+        private _viewportChangedHandler(e);
         private _scrollerChangedHandler(e);
         private setViewportVScrollPosition(pos);
         private setViewportHScrollPosition(pos);
@@ -9477,33 +9584,28 @@ declare module egret.gui {
          */
         private throwRangeError(index);
         /**
-         * @method egret.gui.Scroller#getElementAt
          * @param index {number}
          * @returns {IVisualElement}
          */
         getElementAt(index: number): IVisualElement;
         /**
-         * @method egret.gui.Scroller#getElementIndex
          * @param element {IVisualElement}
          * @returns {number}
          */
         getElementIndex(element: IVisualElement): number;
         /**
-         * @method egret.gui.Scroller#containsElement
          * @param element {IVisualElement}
          * @returns {boolean}
          */
         containsElement(element: IVisualElement): boolean;
         private throwNotSupportedError();
         /**
-         * @method egret.gui.Scroller#addElement
          * @deprecated
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         addElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.Scroller#addElementAt
          * @deprecated
          * @param element {IVisualElement}
          * @param index {number}
@@ -9511,54 +9613,46 @@ declare module egret.gui {
          */
         addElementAt(element: IVisualElement, index: number): IVisualElement;
         /**
-         * @method egret.gui.Scroller#removeElement
          * @deprecated
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         removeElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.Scroller#removeElementAt
          * @deprecated
          * @param index {number}
          * @returns {IVisualElement}
          */
         removeElementAt(index: number): IVisualElement;
         /**
-         * @method egret.gui.Scroller#removeAllElements
          * @deprecated
          */
         removeAllElements(): void;
         /**
-         * @method egret.gui.Scroller#setElementIndex
          * @deprecated
          * @param element {IVisualElement}
          * @param index {number}
          */
         setElementIndex(element: IVisualElement, index: number): void;
         /**
-         * @method egret.gui.Scroller#swapElements
          * @deprecated
          * @param element1 {IVisualElement}
          * @param element2 {IVisualElement}
          */
         swapElements(element1: IVisualElement, element2: IVisualElement): void;
         /**
-         * @method egret.gui.Scroller#swapElementsAt
          * @deprecated
          * @param index1 {number}
          * @param index2 {number}
          */
         swapElementsAt(index1: number, index2: number): void;
         /**
-         * @method egret.gui.Scroller#addChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
          */
         addChild(child: DisplayObject): DisplayObject;
         /**
-         * @method egret.gui.Scroller#addChildAt
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
@@ -9566,35 +9660,30 @@ declare module egret.gui {
          */
         addChildAt(child: DisplayObject, index: number): DisplayObject;
         /**
-         * @method egret.gui.Scroller#removeChild
          * @deprecated
          * @param child {DisplayObject}
          * @returns {DisplayObject}
          */
         removeChild(child: DisplayObject): DisplayObject;
         /**
-         * @method egret.gui.Scroller#removeChildAt
          * @deprecated
          * @param index {number}
          * @returns {DisplayObject}
          */
         removeChildAt(index: number): DisplayObject;
         /**
-         * @method egret.gui.Scroller#setChildIndex
          * @deprecated
          * @param child {DisplayObject}
          * @param index {number}
          */
         setChildIndex(child: DisplayObject, index: number): void;
         /**
-         * @method egret.gui.Scroller#swapChildren
          * @deprecated
          * @param child1 {DisplayObject}
          * @param child2 {DisplayObject}
          */
         swapChildren(child1: DisplayObject, child2: DisplayObject): void;
         /**
-         * @method egret.gui.Scroller#swapChildrenAt
          * @deprecated
          * @param index1 {number}
          * @param index2 {number}
@@ -9604,7 +9693,6 @@ declare module egret.gui {
         _checkVbar(): void;
         /**
          * 若皮肤是ISkin,则调用此方法附加皮肤中的公共部件
-         * @method egret.gui.Scroller#partAdded
          * @param partName {string}
          * @param instance {any}
          */
@@ -9612,6 +9700,19 @@ declare module egret.gui {
         _removeScrollBars(): void;
         private hBarChanged(e);
         private vBarChanged(e);
+        _createOwnStyleProtoChain(chain: any): void;
+        /**
+         * 添加到父级容器的样式原型链
+         */
+        regenerateStyleCache(parentChain: any): void;
+        /**
+         * 通知项列表样式发生改变
+         */
+        notifyStyleChangeInChildren(styleProp: string): void;
+        /**
+         * 更新子项的nestLevel属性
+         */
+        _updateChildrenNestLevel(): void;
     }
 }
 declare module egret.gui {
@@ -9654,10 +9755,7 @@ declare module egret.gui {
          * @inheritDoc
          */
         restrict: string;
-        /**
-         * @inheritDoc
-         */
-        _setFontSize(value: number): void;
+        styleChanged(styleProp: string): void;
         _setLineSpacing(value: number): void;
         private _heightInLines;
         private heightInLinesChanged;
@@ -11255,39 +11353,11 @@ declare module egret.gui {
          * @member egret.gui.BasicLayout#mouseWheelSpeed
          */
         mouseWheelSpeed: number;
-        /**
-         * @method egret.gui.BasicLayout#getElementBoundsLeftOfScrollRect
-         * @param scrollRect {Rectangle}
-         * @returns {Rectangle}
-         */
         getElementBoundsLeftOfScrollRect(scrollRect: Rectangle): Rectangle;
-        /**
-         * @method egret.gui.BasicLayout#getElementBoundsRightOfScrollRect
-         * @param scrollRect {Rectangle}
-         * @returns {Rectangle}
-         */
         getElementBoundsRightOfScrollRect(scrollRect: Rectangle): Rectangle;
-        /**
-         * @method egret.gui.BasicLayout#getElementBoundsAboveScrollRect
-         * @param scrollRect {Rectangle}
-         * @returns {Rectangle}
-         */
         getElementBoundsAboveScrollRect(scrollRect: Rectangle): Rectangle;
-        /**
-         * @method egret.gui.BasicLayout#getElementBoundsBelowScrollRect
-         * @param scrollRect {Rectangle}
-         * @returns {Rectangle}
-         */
         getElementBoundsBelowScrollRect(scrollRect: Rectangle): Rectangle;
-        /**
-         * @method egret.gui.BasicLayout#measure
-         */
         measure(): void;
-        /**
-         * @method egret.gui.BasicLayout#updateDisplayList
-         * @param unscaledWidth {number}
-         * @param unscaledHeight {number}
-         */
         updateDisplayList(unscaledWidth: number, unscaledHeight: number): void;
     }
 }
@@ -11528,9 +11598,6 @@ declare module egret.gui {
          * 标记目标容器的尺寸和显示列表失效
          */
         private invalidateTargetSizeAndDisplayList();
-        /**
-         * @method egret.gui.VerticalLayout#measure
-         */
         measure(): void;
         /**
          * 测量使用虚拟布局的尺寸
@@ -11541,7 +11608,6 @@ declare module egret.gui {
          */
         private measureReal();
         /**
-         * @method egret.gui.VerticalLayout#updateDisplayList
          * @param width {number}
          * @param height {number}
          */
@@ -11563,18 +11629,13 @@ declare module egret.gui {
          */
         private getElementTotalSize();
         /**
-         * @method egret.gui.VerticalLayout#elementAdded
          * @param index {number}
          */
         elementAdded(index: number): void;
         /**
-         * @method egret.gui.VerticalLayout#elementRemoved
          * @param index {number}
          */
         elementRemoved(index: number): void;
-        /**
-         * @method egret.gui.VerticalLayout#clearVirtualLayoutCache
-         */
         clearVirtualLayoutCache(): void;
         /**
          * 折半查找法寻找指定位置的显示对象索引
@@ -11593,7 +11654,6 @@ declare module egret.gui {
          */
         private indexInViewCalculated;
         /**
-         * @method egret.gui.VerticalLayout#scrollPositionChanged
          */
         scrollPositionChanged(): void;
         /**
@@ -11749,19 +11809,8 @@ declare module egret.gui {
          * 获取缓存的子对象尺寸总和
          */
         private getElementTotalSize();
-        /**
-         * @method egret.gui.HorizontalLayout#elementAdded
-         * @param index {number}
-         */
         elementAdded(index: number): void;
-        /**
-         * @method egret.gui.HorizontalLayout#elementRemoved
-         * @param index {number}
-         */
         elementRemoved(index: number): void;
-        /**
-         * @method egret.gui.HorizontalLayout#clearVirtualLayoutCache
-         */
         clearVirtualLayoutCache(): void;
         /**
          * 折半查找法寻找指定位置的显示对象索引
@@ -11801,7 +11850,6 @@ declare module egret.gui {
         private updateDisplayListReal(width, height);
         /**
          * 为每个可变尺寸的子项分配空白区域
-         * @method egret.gui.HorizontalLayout.flexChildrenProportionally
          * @param spaceForChildren {number}
          * @param spaceToDistribute {number}
          * @param totalPercent {number}
@@ -12012,9 +12060,6 @@ declare module egret.gui {
          * 标记目标容器的尺寸和显示列表失效
          */
         private invalidateTargetSizeAndDisplayList();
-        /**
-         * @method egret.gui.TileLayout#measure
-         */
         measure(): void;
         /**
          * 计算行和列的尺寸及数量
@@ -12056,16 +12101,12 @@ declare module egret.gui {
          * 视图的第一个和最后一个元素的索引值已经计算好的标志
          */
         private indexInViewCalculated;
-        /**
-         * @method egret.gui.TileLayout#scrollPositionChanged
-         */
         scrollPositionChanged(): void;
         /**
          * 获取视图中第一个和最后一个元素的索引,返回是否发生改变
          */
         private getIndexInView();
         /**
-         * @method egret.gui.TileLayout#updateDisplayList
          * @param width {number}
          * @param height {number}
          */
@@ -12108,15 +12149,11 @@ declare module egret.gui {
  */
 declare module egret.gui {
     /**
-     * @class egret.gui.UILayer
-     * @classdesc
      * UIStage的虚拟子容器
-     * @implements egret.gui.IContainer
      */
     class UILayer implements IContainer {
         /**
          * 构造函数
-         * @method egret.gui.UILayer#constructor
          * @param owner {IUIStage}
          * @param lowerBoundReference {string}
          * @param upperBoundReference {strin}
@@ -12134,9 +12171,6 @@ declare module egret.gui {
          * 容器上边界属性
          */
         private upperBoundReference;
-        /**
-         * @member egret.gui.UILayer#numElements
-         */
         numElements: number;
         private raw_getElementAt;
         private raw_addElementAt;
@@ -12144,48 +12178,12 @@ declare module egret.gui {
         private raw_removeElement;
         private raw_removeElementAt;
         private raw_setElementIndex;
-        /**
-         * @method egret.gui.UILayer#getElementAt
-         * @param index {number}
-         * @returns {IVisualElement}
-         */
         getElementAt(index: number): IVisualElement;
-        /**
-         * @method egret.gui.UILayer#addElement
-         * @param element {IVisualElement}
-         * @returns {IVisualElement}
-         */
         addElement(element: IVisualElement): IVisualElement;
-        /**
-         * @method egret.gui.UILayer#addElementAt
-         * @param element {IVisualElement}
-         * @param index {number}
-         * @returns {IVisualElement}
-         */
         addElementAt(element: IVisualElement, index: number): IVisualElement;
-        /**
-         * @method egret.gui.UILayer#removeElement
-         * @param element {IVisualElement}
-         * @returns {IVisualElement}
-         */
         removeElement(element: IVisualElement): IVisualElement;
-        /**
-         * @method egret.gui.UILayer#removeElementAt
-         * @param index {number}
-         * @returns {IVisualElement}
-         */
         removeElementAt(index: number): IVisualElement;
-        /**
-         * @method egret.gui.UILayer#getElementIndex
-         * @param element {IVisualElement}
-         * @returns {number}
-         */
         getElementIndex(element: IVisualElement): number;
-        /**
-         * @method egret.gui.UILayer#setElementIndex
-         * @param element {IVisualElement}
-         * @param index {number}
-         */
         setElementIndex(element: IVisualElement, index: number): void;
     }
 }
@@ -12286,26 +12284,22 @@ declare module egret.gui {
          */
         scaleX: number;
         /**
-         * @member egret.gui.UIStage#scaleY
          */
         /**
          * @inheritDoc
          */
         scaleY: number;
         /**
-         * @method egret.gui.UIStage#setActualSize
          * @param w {number}
          * @param h {number}
          */
         setActualSize(w: number, h: number): void;
         /**
-         * @method egret.gui.UIStage#setLayoutBoundsPosition
          * @param x {number}
          * @param y {number}
          */
         setLayoutBoundsPosition(x: number, y: number): void;
         /**
-         * @method egret.gui.UIStage#setLayoutBoundsSize
          * @param layoutWidth {number}
          * @param layoutHeight {number}
          */
@@ -12354,36 +12348,30 @@ declare module egret.gui {
          */
         private cursorIndex;
         /**
-         * @method egret.gui.UIStage#addElement
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         addElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.UIStage#addElementAt
          * @param element {IVisualElement}
          * @param index {number}
          * @returns {IVisualElement}
          */
         addElementAt(element: IVisualElement, index: number): IVisualElement;
         /**
-         * @method egret.gui.UIStage#removeElement
          * @param element {IVisualElement}
          * @returns {IVisualElement}
          */
         removeElement(element: IVisualElement): IVisualElement;
         /**
-         * @method egret.gui.UIStage#removeElementAt
          * @param index {number}
          * @returns {IVisualElement}
          */
         removeElementAt(index: number): IVisualElement;
         /**
-         * @method egret.gui.UIStage#removeAllElements
          */
         removeAllElements(): void;
         /**
-         * @method egret.gui.UIStage#_elementRemoved
          * @param element {IVisualElement}
          * @param index {number}
          * @param notifyListeners {boolean}

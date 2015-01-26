@@ -50,7 +50,6 @@ var egret;
             function DropDownList() {
                 _super.call(this);
                 this._prompt = "";
-                this.hostComponentKey = "egret.gui.DropDownList";
             }
             Object.defineProperty(DropDownList.prototype, "prompt", {
                 /**
@@ -83,10 +82,6 @@ var egret;
                     this.invalidateProperties();
                 }
             };
-            /**
-             * @method egret.gui.DropDownList#updateLabelDisplay
-             * @param displayItem {any}
-             */
             DropDownList.prototype.updateLabelDisplay = function (displayItem) {
                 if (displayItem === void 0) { displayItem = undefined; }
                 if (this.labelDisplay) {
@@ -101,6 +96,6 @@ var egret;
             return DropDownList;
         })(gui.DropDownListBase);
         gui.DropDownList = DropDownList;
-        DropDownList.prototype.__class__ = "gui.DropDownList";
+        DropDownList.prototype.__class__ = "egret.gui.DropDownList";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

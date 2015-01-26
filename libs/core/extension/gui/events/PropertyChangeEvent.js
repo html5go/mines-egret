@@ -96,6 +96,6 @@ var egret;
             return PropertyChangeEvent;
         })(egret.Event);
         gui.PropertyChangeEvent = PropertyChangeEvent;
-        PropertyChangeEvent.prototype.__class__ = "gui.PropertyChangeEvent";
+        PropertyChangeEvent.prototype.__class__ = "egret.gui.PropertyChangeEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

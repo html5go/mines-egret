@@ -453,9 +453,6 @@ var egret;
                     this.target.invalidateDisplayList();
                 }
             };
-            /**
-             * @method egret.gui.TileLayout#measure
-             */
             TileLayout.prototype.measure = function () {
                 if (!this.target)
                     return;
@@ -624,9 +621,6 @@ var egret;
                 this.maxElementWidth = 0;
                 this.maxElementHeight = 0;
             };
-            /**
-             * @method egret.gui.TileLayout#scrollPositionChanged
-             */
             TileLayout.prototype.scrollPositionChanged = function () {
                 _super.prototype.scrollPositionChanged.call(this);
                 if (this.useVirtualLayout) {
@@ -701,7 +695,6 @@ var egret;
                 return this.startIndex != oldStartIndex || this.endIndex != oldEndIndex;
             };
             /**
-             * @method egret.gui.TileLayout#updateDisplayList
              * @param width {number}
              * @param height {number}
              */
@@ -861,6 +854,6 @@ var egret;
             return TileLayout;
         })(gui.LayoutBase);
         gui.TileLayout = TileLayout;
-        TileLayout.prototype.__class__ = "gui.TileLayout";
+        TileLayout.prototype.__class__ = "egret.gui.TileLayout";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -48,11 +48,10 @@ var egret;
              */
             function CheckBox() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.CheckBox";
             }
             return CheckBox;
         })(gui.ToggleButtonBase);
         gui.CheckBox = CheckBox;
-        CheckBox.prototype.__class__ = "gui.CheckBox";
+        CheckBox.prototype.__class__ = "egret.gui.CheckBox";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

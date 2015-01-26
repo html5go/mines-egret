@@ -15,7 +15,6 @@ var egret;
              */
             function TextInput() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.TextInput";
             }
             Object.defineProperty(TextInput.prototype, "widthInChars", {
                 /**
@@ -60,6 +59,6 @@ var egret;
             return TextInput;
         })(gui.SkinnableTextBase);
         gui.TextInput = TextInput;
-        TextInput.prototype.__class__ = "gui.TextInput";
+        TextInput.prototype.__class__ = "egret.gui.TextInput";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

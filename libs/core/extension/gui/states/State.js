@@ -71,6 +71,6 @@ var egret;
             return State;
         })(egret.HashObject);
         gui.State = State;
-        State.prototype.__class__ = "gui.State";
+        State.prototype.__class__ = "egret.gui.State";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

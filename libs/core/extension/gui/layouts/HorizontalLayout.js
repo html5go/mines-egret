@@ -379,10 +379,6 @@ var egret;
                 totalSize -= gap;
                 return totalSize;
             };
-            /**
-             * @method egret.gui.HorizontalLayout#elementAdded
-             * @param index {number}
-             */
             HorizontalLayout.prototype.elementAdded = function (index) {
                 if (!this.useVirtualLayout)
                     return;
@@ -390,19 +386,12 @@ var egret;
                 var typicalWidth = this.typicalLayoutRect ? this.typicalLayoutRect.width : 71;
                 this.elementSizeTable.splice(index, 0, typicalWidth);
             };
-            /**
-             * @method egret.gui.HorizontalLayout#elementRemoved
-             * @param index {number}
-             */
             HorizontalLayout.prototype.elementRemoved = function (index) {
                 if (!this.useVirtualLayout)
                     return;
                 _super.prototype.elementRemoved.call(this, index);
                 this.elementSizeTable.splice(index, 1);
             };
-            /**
-             * @method egret.gui.HorizontalLayout#clearVirtualLayoutCache
-             */
             HorizontalLayout.prototype.clearVirtualLayoutCache = function () {
                 if (!this.useVirtualLayout)
                     return;
@@ -735,7 +724,6 @@ var egret;
             };
             /**
              * 为每个可变尺寸的子项分配空白区域
-             * @method egret.gui.HorizontalLayout.flexChildrenProportionally
              * @param spaceForChildren {number}
              * @param spaceToDistribute {number}
              * @param totalPercent {number}
@@ -796,7 +784,7 @@ var egret;
             return HorizontalLayout;
         })(gui.LayoutBase);
         gui.HorizontalLayout = HorizontalLayout;
-        HorizontalLayout.prototype.__class__ = "gui.HorizontalLayout";
+        HorizontalLayout.prototype.__class__ = "egret.gui.HorizontalLayout";
         var ChildInfo = (function () {
             function ChildInfo() {
                 /**
@@ -806,6 +794,6 @@ var egret;
             }
             return ChildInfo;
         })();
-        ChildInfo.prototype.__class__ = "ChildInfo";
+        ChildInfo.prototype.__class__ = "egret.gui.ChildInfo";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

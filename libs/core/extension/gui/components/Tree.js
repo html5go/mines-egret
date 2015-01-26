@@ -52,7 +52,6 @@ var egret;
                  * 图标字段或函数改变标志
                  */
                 this.iconFieldOrFunctionChanged = false;
-                this.hostComponentKey = "egret.gui.Tree";
             }
             /**
              * @method egret.gui.Tree#createChildren
@@ -255,6 +254,6 @@ var egret;
             return Tree;
         })(gui.List);
         gui.Tree = Tree;
-        Tree.prototype.__class__ = "gui.Tree";
+        Tree.prototype.__class__ = "egret.gui.Tree";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

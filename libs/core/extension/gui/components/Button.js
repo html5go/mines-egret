@@ -47,11 +47,49 @@ var egret;
              */
             function Button() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.Button";
             }
+            Object.defineProperty(Button.prototype, "icon", {
+                /**
+                 * 要在按钮上显示的图标
+                 * @member egret.gui.ButtonBase#icon
+                 */
+                get: function () {
+                    return this._getIcon();
+                },
+                set: function (value) {
+                    this._setIcon(value);
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Button.prototype._getIcon = function () {
+                if (this.iconDisplay) {
+                    return this.iconDisplay.source;
+                }
+                else {
+                    return this._icon;
+                }
+            };
+            Button.prototype._setIcon = function (value) {
+                this._icon = value;
+                if (this.iconDisplay) {
+                    this.iconDisplay.source = value;
+                }
+            };
+            /**
+             * @method egret.gui.ButtonBase#partAdded
+             * @param partName {string}
+             * @param instance {any}
+             */
+            Button.prototype.partAdded = function (partName, instance) {
+                _super.prototype.partAdded.call(this, partName, instance);
+                if (instance == this.iconDisplay) {
+                    this.iconDisplay.source = this._icon;
+                }
+            };
             return Button;
         })(gui.ButtonBase);
         gui.Button = Button;
-        Button.prototype.__class__ = "gui.Button";
+        Button.prototype.__class__ = "egret.gui.Button";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

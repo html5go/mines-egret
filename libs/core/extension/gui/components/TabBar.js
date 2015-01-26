@@ -48,20 +48,27 @@ var egret;
              */
             function TabBar() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.TabBar";
+                /**
+                 * 是否捕获ItemRenderer以便在MouseUp时抛出ItemClick事件
+                 */
+                this._captureItemRenderer = true;
                 this.requireSelection = true;
             }
-            /**
-             * @method egret.gui.TabBar#c
-             * @param value {boolea}
-             */
-            TabBar.prototype.c = function (value) {
-                if (value == this._requireSelection)
-                    return;
-                _super.prototype._setRequireSelection.call(this, value);
-                this.requireSelectionChanged_tabBar = true;
-                this.invalidateProperties();
-            };
+            Object.defineProperty(TabBar.prototype, "requireSelection", {
+                /**
+                 * @method egret.gui.TabBar#c
+                 * @param value {boolean}
+                 */
+                set: function (value) {
+                    if (value == this._requireSelection)
+                        return;
+                    _super.prototype._setRequireSelection.call(this, value);
+                    this.requireSelectionChanged_tabBar = true;
+                    this.invalidateProperties();
+                },
+                enumerable: true,
+                configurable: true
+            });
             /**
              * @inheritDoc
              */
@@ -88,9 +95,6 @@ var egret;
             TabBar.prototype.onViewStackIndexChange = function (event) {
                 this._setSelectedIndex((this.dataProvider).selectedIndex, false);
             };
-            /**
-             * @method egret.gui.TabBar#commitProperties
-             */
             TabBar.prototype.commitProperties = function () {
                 _super.prototype.commitProperties.call(this);
                 if (this.requireSelectionChanged_tabBar && this.dataGroup) {
@@ -103,34 +107,42 @@ var egret;
                     }
                 }
             };
-            /**
-             * @method egret.gui.TabBar#dataGroup_rendererAddHandler
-             * @param event {RendererExistenceEvent}
-             */
             TabBar.prototype.dataGroup_rendererAddHandler = function (event) {
                 _super.prototype.dataGroup_rendererAddHandler.call(this, event);
                 var renderer = event.renderer;
-                if (renderer) {
-                    renderer.addEventListener(egret.TouchEvent.TOUCH_TAP, this.item_clickHandler, this);
-                    if (renderer instanceof gui.TabBarButton)
-                        renderer.allowDeselection = !this.requireSelection;
-                }
+                if (!renderer)
+                    return;
+                renderer.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.item_touchBeginHandler, this);
+                renderer.addEventListener(egret.TouchEvent.TOUCH_END, this.item_touchEndHandler, this);
+                if (renderer instanceof gui.TabBarButton)
+                    renderer.allowDeselection = !this.requireSelection;
             };
-            /**
-             * @method egret.gui.TabBar#dataGroup_rendererRemoveHandler
-             * @param event {RendererExistenceEvent}
-             */
             TabBar.prototype.dataGroup_rendererRemoveHandler = function (event) {
                 _super.prototype.dataGroup_rendererRemoveHandler.call(this, event);
                 var renderer = event.renderer;
-                if (renderer)
-                    renderer.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.item_clickHandler, this);
+                if (!renderer)
+                    return;
+                renderer.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.item_touchBeginHandler, this);
+                renderer.removeEventListener(egret.TouchEvent.TOUCH_END, this.item_touchEndHandler, this);
             };
             /**
              * 鼠标在条目上按下
              */
-            TabBar.prototype.item_clickHandler = function (event) {
+            TabBar.prototype.item_touchBeginHandler = function (event) {
+                if (event._isDefaultPrevented)
+                    return;
                 var itemRenderer = (event.currentTarget);
+                this._touchBeginItem = itemRenderer;
+                gui.UIGlobals.stage.addEventListener(egret.TouchEvent.TOUCH_END, this.stage_touchEndHandler, this);
+                gui.UIGlobals.stage.addEventListener(egret.Event.LEAVE_STAGE, this.stage_touchEndHandler, this);
+            };
+            /**
+             * 鼠标在项呈示器上弹起，抛出ItemClick事件。
+             */
+            TabBar.prototype.item_touchEndHandler = function (event) {
+                var itemRenderer = (event.currentTarget);
+                if (itemRenderer != this._touchBeginItem)
+                    return;
                 var newIndex;
                 if (itemRenderer)
                     newIndex = itemRenderer.itemIndex;
@@ -142,11 +154,21 @@ var egret;
                 }
                 else
                     this._setSelectedIndex(newIndex, true);
+                if (!this._captureItemRenderer)
+                    return;
                 this._dispatchListEvent(event, gui.ListEvent.ITEM_CLICK, itemRenderer);
+            };
+            /**
+             * 鼠标在舞台上弹起
+             */
+            TabBar.prototype.stage_touchEndHandler = function (event) {
+                gui.UIGlobals.stage.removeEventListener(egret.TouchEvent.TOUCH_END, this.stage_touchEndHandler, this);
+                gui.UIGlobals.stage.removeEventListener(egret.Event.LEAVE_STAGE, this.stage_touchEndHandler, this);
+                this._touchBeginItem = null;
             };
             return TabBar;
         })(gui.ListBase);
         gui.TabBar = TabBar;
-        TabBar.prototype.__class__ = "gui.TabBar";
+        TabBar.prototype.__class__ = "egret.gui.TabBar";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

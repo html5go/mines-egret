@@ -70,6 +70,6 @@ var egret;
             return DefaultSkinAdapter;
         })();
         gui.DefaultSkinAdapter = DefaultSkinAdapter;
-        DefaultSkinAdapter.prototype.__class__ = "gui.DefaultSkinAdapter";
+        DefaultSkinAdapter.prototype.__class__ = "egret.gui.DefaultSkinAdapter";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

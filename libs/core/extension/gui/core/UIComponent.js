@@ -60,6 +60,18 @@ var egret;
                  */
                 this.initializeCalled = false;
                 this._nestLevel = 0;
+                /**
+                 * 是否已经创建了自身的样式原型链
+                 */
+                this._hasOwnStyleChain = false;
+                /**
+                 * 样式原型链引用
+                 */
+                this._styleProtoChain = null;
+                /**
+                 * 一个性能优化的标志变量。某些子类可以设置为true显式表明自己不含有可设置样式的子项。
+                 */
+                this._hasNoStyleChild = false;
                 this._enabled = true;
                 this._width = 0;
                 this._height = 0;
@@ -77,13 +89,7 @@ var egret;
                  * @member egret.gui.UIComponent#_invalidateSizeFlag
                  */
                 this._invalidateSizeFlag = false;
-                /**
-                 * @member egret.gui.UIComponent#_invalidateDisplayListFlag
-                 */
                 this._invalidateDisplayListFlag = false;
-                /**
-                 * @member egret.gui.UIComponent#_validateNowFlag
-                 */
                 this._validateNowFlag = false;
                 this._includeInLayout = true;
                 /**
@@ -99,6 +105,10 @@ var egret;
                 this.touchEnabled = true;
                 this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddedToStage, this);
                 this.addEventListener(egret.Event.ADDED_TO_STAGE, this.checkInvalidateFlag, this);
+                if (UIComponent.prototypeCanSet === undefined) {
+                    var chain = {};
+                    UIComponent.prototypeCanSet = (chain.__proto__ !== undefined);
+                }
             }
             /**
              * 添加到舞台
@@ -179,6 +189,7 @@ var egret;
                         return;
                     this._initialized = value;
                     if (value) {
+                        this.childrenCreated();
                         gui.UIEvent.dispatchUIEvent(this, gui.UIEvent.CREATION_COMPLETE);
                     }
                 },
@@ -198,7 +209,9 @@ var egret;
                 this.initializeCalled = true;
                 gui.UIEvent.dispatchUIEvent(this, gui.UIEvent.INITIALIZE);
                 this.createChildren();
-                this.childrenCreated();
+                this.invalidateProperties();
+                this.invalidateSize();
+                this.invalidateDisplayList();
             };
             /**
              * 创建子项,子类覆盖此方法以完成组件子项的初始化操作，
@@ -212,9 +225,6 @@ var egret;
              * @method egret.gui.UIComponent#childrenCreated
              */
             UIComponent.prototype.childrenCreated = function () {
-                this.invalidateProperties();
-                this.invalidateSize();
-                this.invalidateDisplayList();
             };
             Object.defineProperty(UIComponent.prototype, "nestLevel", {
                 /**
@@ -231,16 +241,156 @@ var egret;
                         this.addEventListener(egret.Event.ADDED_TO_STAGE, this.checkInvalidateFlag, this);
                     else
                         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.checkInvalidateFlag, this);
-                    for (var i = this.numChildren - 1; i >= 0; i--) {
-                        var child = (this.getChildAt(i));
-                        if (child != null) {
-                            child.nestLevel = this._nestLevel + 1;
-                        }
-                    }
+                    this._updateChildrenNestLevel();
                 },
                 enumerable: true,
                 configurable: true
             });
+            /**
+             * 更新子项的nestLevel属性
+             */
+            UIComponent.prototype._updateChildrenNestLevel = function () {
+                for (var i = this.numChildren - 1; i >= 0; i--) {
+                    var child = (this.getChildAt(i));
+                    if (child && "nestLevel" in child) {
+                        child.nestLevel = this._nestLevel + 1;
+                    }
+                }
+            };
+            /**
+             * 获取指定的名称的样式属性值
+             */
+            UIComponent.prototype.getStyle = function (styleProp) {
+                var chain = this._styleProtoChain;
+                if (!chain) {
+                    return undefined;
+                }
+                return chain[styleProp];
+            };
+            /**
+             * 对此组件实例设置样式属性。在此组件上设置的样式会覆盖父级容器的同名样式。推荐在子项较少的组件上使用，尽量避免在全局调用此方法，有可能造成性能问题。
+             */
+            UIComponent.prototype.setStyle = function (styleProp, newValue) {
+                var chain = this._styleProtoChain;
+                if (!this._hasOwnStyleChain) {
+                    chain = this._createOwnStyleProtoChain(chain);
+                }
+                chain[styleProp] = newValue;
+                this.styleChanged(styleProp);
+                this.notifyStyleChangeInChildren(styleProp);
+            };
+            UIComponent.prototype.styleChanged = function (styleProp) {
+            };
+            /**
+             * 通知子项列表样式发生改变
+             */
+            UIComponent.prototype.notifyStyleChangeInChildren = function (styleProp) {
+                if (this._hasNoStyleChild) {
+                    return;
+                }
+                for (var i = this.numChildren - 1; i >= 0; i--) {
+                    var child = (this.getChildAt(i));
+                    if (!child) {
+                        continue;
+                    }
+                    if ("styleChanged" in child) {
+                        child.styleChanged(styleProp);
+                        child.notifyStyleChangeInChildren(styleProp);
+                    }
+                }
+            };
+            UIComponent.prototype._createOwnStyleProtoChain = function (chain) {
+                this._hasOwnStyleChain = true;
+                if (UIComponent.prototypeCanSet) {
+                    this._styleProtoChain = {};
+                    this._styleProtoChain.__proto__ = chain ? chain : UIComponent.emptyStyleChain;
+                }
+                else {
+                    this._styleProtoChain = this.createProtoChain(chain);
+                }
+                chain = this._styleProtoChain;
+                if (!this._hasNoStyleChild) {
+                    for (var i = this.numChildren - 1; i >= 0; i--) {
+                        var child = (this.getChildAt(i));
+                        if (child && "regenerateStyleCache" in child) {
+                            child["regenerateStyleCache"](chain);
+                        }
+                    }
+                }
+                return chain;
+            };
+            /**
+             * 创建一个原型链节点
+             */
+            UIComponent.prototype.createProtoChain = function (parentChain) {
+                function factory() {
+                }
+                ;
+                factory.prototype = parentChain;
+                var childChain = new factory();
+                factory.prototype = null;
+                return childChain;
+            };
+            /**
+             * 清除在此组件实例上设置过的指定样式名。
+             */
+            UIComponent.prototype.clearStyle = function (styleProp) {
+                if (!this._hasOwnStyleChain) {
+                    return;
+                }
+                var chain = this._styleProtoChain;
+                delete chain[styleProp];
+                this.styleChanged(styleProp);
+                this.notifyStyleChangeInChildren(styleProp);
+            };
+            /**
+             * 重新生成自身以及所有子项的原型链
+             */
+            UIComponent.prototype.regenerateStyleCache = function (parentChain) {
+                if (!UIComponent.prototypeCanSet) {
+                    this.regenerateStyleCacheForIE(parentChain);
+                    return;
+                }
+                if (this._hasOwnStyleChain) {
+                    this._styleProtoChain.__proto__ = parentChain ? parentChain : UIComponent.emptyStyleChain;
+                }
+                else if (this._styleProtoChain != parentChain) {
+                    this._styleProtoChain = parentChain;
+                    for (var i = this.numChildren - 1; i >= 0; i--) {
+                        var child = (this.getChildAt(i));
+                        if (child && "regenerateStyleCache" in child) {
+                            child.regenerateStyleCache(parentChain);
+                        }
+                    }
+                }
+            };
+            /**
+             * 兼容IE9，10的写法。
+             */
+            UIComponent.prototype.regenerateStyleCacheForIE = function (parentChain) {
+                if (this._hasOwnStyleChain) {
+                    var chain = this._styleProtoChain;
+                    var childChain = this.createProtoChain(parentChain);
+                    for (var key in chain) {
+                        if (chain.hasOwnProperty(key)) {
+                            childChain[key] = chain[key];
+                        }
+                    }
+                    this._styleProtoChain = childChain;
+                    parentChain = childChain;
+                }
+                else {
+                    this._styleProtoChain = parentChain;
+                }
+                if (!this._hasNoStyleChild) {
+                    for (var i = this.numChildren - 1; i >= 0; i--) {
+                        var child = this.getChildAt(i);
+                        if (child && "regenerateStyleCacheForIE" in child) {
+                            child["regenerateStyleCacheForIE"](parentChain);
+                        }
+                    }
+                }
+            };
             /**
              * 添加对象到显示列表,此接口仅预留给框架内部使用
              * 如果需要管理子项，若有，请使用容器的addElement()方法，非法使用有可能造成无法自动布局。
@@ -328,12 +478,21 @@ var egret;
             };
             /**
              * 即将添加一个子项
-             * @method egret.gui.UIComponent#_addingChild
-             * @param child {DisplayObject}
              */
             UIComponent.prototype._addingChild = function (child) {
-                if (child && "nestLevel" in child) {
+                if (!child) {
+                    return;
+                }
+                if ("nestLevel" in child) {
                     child.nestLevel = this._nestLevel + 1;
+                }
+                if ("styleChanged" in child) {
+                    var chain = this._styleProtoChain;
+                    if (chain || child["_styleProtoChain"]) {
+                        child["regenerateStyleCache"](chain);
+                        child["styleChanged"](null);
+                        child["notifyStyleChangeInChildren"](null);
+                    }
                 }
             };
             /**
@@ -373,7 +532,10 @@ var egret;
              * 已经移除一个子项
              */
             UIComponent.prototype._childRemoved = function (child) {
-                if (child && "nestLevel" in child) {
+                if (!child) {
+                    return;
+                }
+                if ("nestLevel" in child) {
                     child.nestLevel = 0;
                 }
             };
@@ -831,15 +993,12 @@ var egret;
             };
             /**
              * 是否可以跳过测量尺寸阶段,返回true则不执行measure()方法
-             * @method egret.gui.UIComponent#canSkipMeasurement
-             * @returns {boolean}
              */
             UIComponent.prototype.canSkipMeasurement = function () {
                 return !isNaN(this._explicitWidth) && !isNaN(this._explicitHeight);
             };
             /**
              * 提交属性，子类在调用完invalidateProperties()方法后，应覆盖此方法以应用属性
-             * @method egret.gui.UIComponent#commitProperties
              */
             UIComponent.prototype.commitProperties = function () {
                 if (this.oldWidth != this._width || this.oldHeight != this._height) {
@@ -1210,9 +1369,10 @@ var egret;
                 enumerable: true,
                 configurable: true
             });
+            UIComponent.emptyStyleChain = {};
             return UIComponent;
         })(egret.DisplayObjectContainer);
         gui.UIComponent = UIComponent;
-        UIComponent.prototype.__class__ = "gui.UIComponent";
+        UIComponent.prototype.__class__ = "egret.gui.UIComponent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

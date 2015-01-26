@@ -52,7 +52,6 @@ var egret;
                  * contentGroup发生改变时传递的参数
                  */
                 this.contentGroupProperties = {};
-                this.hostComponentKey = "egret.gui.SkinnableContainer";
             }
             /**
              * 获取当前的实体容器
@@ -85,7 +84,6 @@ var egret;
             });
             Object.defineProperty(SkinnableContainer.prototype, "numElements", {
                 /**
-                 * @member egret.gui.SkinnableContainer#numElements
                  */
                 get: function () {
                     return this._getCurrentContentGroup().numElements;
@@ -94,7 +92,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.SkinnableContainer#getElementAt
              * @param index {number}
              * @returns {IVisualElement}
              */
@@ -102,7 +99,6 @@ var egret;
                 return this._getCurrentContentGroup().getElementAt(index);
             };
             /**
-             * @method egret.gui.SkinnableContainer#addElement
              * @param element {IVisualElement}
              * @returns {IVisualElement}
              */
@@ -110,7 +106,6 @@ var egret;
                 return this._getCurrentContentGroup().addElement(element);
             };
             /**
-             * @method egret.gui.SkinnableContainer#addElementAt
              * @param element {IVisualElement}
              * @param index {number}
              * @returns {IVisualElement}
@@ -119,7 +114,6 @@ var egret;
                 return this._getCurrentContentGroup().addElementAt(element, index);
             };
             /**
-             * @method egret.gui.SkinnableContainer#removeElement
              * @param element {IVisualElement}
              * @returns {IVisualElement}
              */
@@ -127,7 +121,6 @@ var egret;
                 return this._getCurrentContentGroup().removeElement(element);
             };
             /**
-             * @method egret.gui.SkinnableContainer#removeElementAt
              * @param index {number}
              * @returns {IVisualElement}
              */
@@ -135,13 +128,11 @@ var egret;
                 return this._getCurrentContentGroup().removeElementAt(index);
             };
             /**
-             * @method egret.gui.SkinnableContainer#removeAllElements
              */
             SkinnableContainer.prototype.removeAllElements = function () {
                 this._getCurrentContentGroup().removeAllElements();
             };
             /**
-             * @method egret.gui.SkinnableContainer#getElementIndex
              * @param element {IVisualElement}
              * @returns {number}
              */
@@ -149,7 +140,6 @@ var egret;
                 return this._getCurrentContentGroup().getElementIndex(element);
             };
             /**
-             * @method egret.gui.SkinnableContainer#setElementIndex
              * @param element {IVisualElement}
              * @param index {number}
              */
@@ -157,7 +147,6 @@ var egret;
                 this._getCurrentContentGroup().setElementIndex(element, index);
             };
             /**
-             * @method egret.gui.SkinnableContainer#swapElements
              * @param element1 {IVisualElement}
              * @param element2 {IVisualElement}
              */
@@ -165,7 +154,6 @@ var egret;
                 this._getCurrentContentGroup().swapElements(element1, element2);
             };
             /**
-             * @method egret.gui.SkinnableContainer#swapElementsAt
              * @param index1 {number}
              * @param index2 {number}
              */
@@ -192,7 +180,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.SkinnableContainer#partAdded
              * @param partName {string}
              * @param instance {any}
              */
@@ -224,7 +211,6 @@ var egret;
                 }
             };
             /**
-             * @method egret.gui.SkinnableContainer#partRemoved
              * @param partName {string}
              * @param instance {any}
              */
@@ -247,8 +233,6 @@ var egret;
             };
             /**
              * 容器添加元素事件
-             * @method egret.gui.SkinnableContainer#_contentGroup_elementAddedHandler
-             * @param event {ElementExistenceEvent}
              */
             SkinnableContainer.prototype._contentGroup_elementAddedHandler = function (event) {
                 event.element.ownerChanged(this);
@@ -256,8 +240,6 @@ var egret;
             };
             /**
              * 容器移除元素事件
-             * @method egret.gui.SkinnableContainer#_contentGroup_elementRemovedHandler
-             * @param event {ElementExistenceEvent}
              */
             SkinnableContainer.prototype._contentGroup_elementRemovedHandler = function (event) {
                 event.element.ownerChanged(null);
@@ -266,6 +248,6 @@ var egret;
             return SkinnableContainer;
         })(gui.SkinnableComponent);
         gui.SkinnableContainer = SkinnableContainer;
-        SkinnableContainer.prototype.__class__ = "gui.SkinnableContainer";
+        SkinnableContainer.prototype.__class__ = "egret.gui.SkinnableContainer";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -199,6 +199,6 @@ var egret;
             return Rect;
         })(gui.UIComponent);
         gui.Rect = Rect;
-        Rect.prototype.__class__ = "gui.Rect";
+        Rect.prototype.__class__ = "egret.gui.Rect";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

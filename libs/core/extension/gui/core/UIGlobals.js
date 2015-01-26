@@ -48,7 +48,6 @@ var egret;
             });
             /**
              * 初始化管理器
-             * @method egret.gui.UIGlobals._initlize
              * @param stage {Stage}
              */
             UIGlobals._initlize = function (stage) {
@@ -76,6 +75,6 @@ var egret;
             return UIGlobals;
         })();
         gui.UIGlobals = UIGlobals;
-        UIGlobals.prototype.__class__ = "gui.UIGlobals";
+        UIGlobals.prototype.__class__ = "egret.gui.UIGlobals";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -129,6 +129,6 @@ var egret;
             return UIEvent;
         })(egret.Event);
         gui.UIEvent = UIEvent;
-        UIEvent.prototype.__class__ = "gui.UIEvent";
+        UIEvent.prototype.__class__ = "egret.gui.UIEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

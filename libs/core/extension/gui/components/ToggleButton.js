@@ -48,11 +48,48 @@ var egret;
              */
             function ToggleButton() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.ToggleButton";
             }
+            Object.defineProperty(ToggleButton.prototype, "icon", {
+                /**
+                 * 要在按钮上显示的图标
+                 * @member egret.gui.ButtonBase#icon
+                 */
+                get: function () {
+                    return this._getIcon();
+                },
+                set: function (value) {
+                    this._setIcon(value);
+                },
+                enumerable: true,
+                configurable: true
+            });
+            ToggleButton.prototype._getIcon = function () {
+                if (this.iconDisplay) {
+                    return this.iconDisplay.source;
+                }
+                else {
+                    return this._icon;
+                }
+            };
+            ToggleButton.prototype._setIcon = function (value) {
+                this._icon = value;
+                if (this.iconDisplay) {
+                    this.iconDisplay.source = value;
+                }
+            };
+            /**
+             * @param partName {string}
+             * @param instance {any}
+             */
+            ToggleButton.prototype.partAdded = function (partName, instance) {
+                _super.prototype.partAdded.call(this, partName, instance);
+                if (instance == this.iconDisplay) {
+                    this.iconDisplay.source = this._icon;
+                }
+            };
             return ToggleButton;
         })(gui.ToggleButtonBase);
         gui.ToggleButton = ToggleButton;
-        ToggleButton.prototype.__class__ = "gui.ToggleButton";
+        ToggleButton.prototype.__class__ = "egret.gui.ToggleButton";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

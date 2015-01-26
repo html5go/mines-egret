@@ -91,6 +91,6 @@ var egret;
             return PopUpEvent;
         })(egret.Event);
         gui.PopUpEvent = PopUpEvent;
-        PopUpEvent.prototype.__class__ = "gui.PopUpEvent";
+        PopUpEvent.prototype.__class__ = "egret.gui.PopUpEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

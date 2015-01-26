@@ -50,17 +50,14 @@ var egret;
                 _super.call(this);
                 /**
                  * 在RadioButtonGroup中的索引
-                 * @member egret.gui.RadioButton#_indexNumber
                  */
                 this._indexNumber = 0;
                 /**
                  * 所属的RadioButtonGroup
-                 * @member egret.gui.RadioButton#_radioButtonGroup
                  */
                 this._radioButtonGroup = null;
                 this.groupChanged = false;
                 this._groupName = "radioGroup";
-                this.hostComponentKey = "egret.gui.RadioButton";
                 this.groupName = "radioGroup";
             }
             Object.defineProperty(RadioButton.prototype, "enabled", {
@@ -211,6 +208,6 @@ var egret;
             return RadioButton;
         })(gui.ToggleButtonBase);
         gui.RadioButton = RadioButton;
-        RadioButton.prototype.__class__ = "gui.RadioButton";
+        RadioButton.prototype.__class__ = "egret.gui.RadioButton";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

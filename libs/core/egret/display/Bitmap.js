@@ -45,11 +45,13 @@ var egret;
             /**
              * 单个Bitmap是否开启DEBUG模式
              * @member {boolean} egret.Bitmap#debug
+             * @private
              */
             this.debug = false;
             /**
              * debug边框颜色，默认值为红色
              * @member {number} egret.Bitmap#debugColor
+             * @private
              */
             this.debugColor = 0xff0000;
             /**
@@ -165,6 +167,7 @@ var egret;
             var sourceHeight = texture._bitmapHeight || textureHeight;
             var destX = texture._offsetX;
             var destY = texture._offsetY;
+            var texture_scale_factor = egret.MainContext.instance.rendererContext.texture_scale_factor;
             var s9g = egret.Rectangle.identity.initialize(scale9Grid.x - Math.round(destX), scale9Grid.y - Math.round(destX), scale9Grid.width, scale9Grid.height);
             var roundedDrawX = Math.round(destX);
             var roundedDrawY = Math.round(destY);
@@ -193,15 +196,18 @@ var egret;
             var destY1 = roundedDrawY + s9g.y;
             var destScaleGridBottom = destHeight - (sourceHeight - s9g.bottom);
             var destScaleGridRight = destWidth - (sourceWidth - s9g.right);
-            renderFilter.drawImage(renderContext, data, sourceX, sourceY, s9g.x, s9g.y, roundedDrawX, roundedDrawY, s9g.x, s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX2, sourceY, s9g.width, s9g.y, destX1, roundedDrawY, destScaleGridRight - s9g.x, s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX3, sourceY, sourceRightW, s9g.y, roundedDrawX + destScaleGridRight, roundedDrawY, destWidth - destScaleGridRight, s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX, sourceY2, s9g.x, s9g.height, roundedDrawX, destY1, s9g.x, destScaleGridBottom - s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX2, sourceY2, s9g.width, s9g.height, destX1, destY1, destScaleGridRight - s9g.x, destScaleGridBottom - s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX3, sourceY2, sourceRightW, s9g.height, roundedDrawX + destScaleGridRight, destY1, destWidth - destScaleGridRight, destScaleGridBottom - s9g.y);
-            renderFilter.drawImage(renderContext, data, sourceX, sourceY3, s9g.x, sourceBottomH, roundedDrawX, roundedDrawY + destScaleGridBottom, s9g.x, destHeight - destScaleGridBottom);
-            renderFilter.drawImage(renderContext, data, sourceX2, sourceY3, s9g.width, sourceBottomH, destX1, roundedDrawY + destScaleGridBottom, destScaleGridRight - s9g.x, destHeight - destScaleGridBottom);
-            renderFilter.drawImage(renderContext, data, sourceX3, sourceY3, sourceRightW, sourceBottomH, roundedDrawX + destScaleGridRight, roundedDrawY + destScaleGridBottom, destWidth - destScaleGridRight, destHeight - destScaleGridBottom);
+            drawImage(renderContext, data, sourceX, sourceY, s9g.x, s9g.y, roundedDrawX, roundedDrawY, s9g.x, s9g.y);
+            drawImage(renderContext, data, sourceX2, sourceY, s9g.width, s9g.y, destX1, roundedDrawY, destScaleGridRight - s9g.x, s9g.y);
+            drawImage(renderContext, data, sourceX3, sourceY, sourceRightW, s9g.y, roundedDrawX + destScaleGridRight, roundedDrawY, destWidth - destScaleGridRight, s9g.y);
+            drawImage(renderContext, data, sourceX, sourceY2, s9g.x, s9g.height, roundedDrawX, destY1, s9g.x, destScaleGridBottom - s9g.y);
+            drawImage(renderContext, data, sourceX2, sourceY2, s9g.width, s9g.height, destX1, destY1, destScaleGridRight - s9g.x, destScaleGridBottom - s9g.y);
+            drawImage(renderContext, data, sourceX3, sourceY2, sourceRightW, s9g.height, roundedDrawX + destScaleGridRight, destY1, destWidth - destScaleGridRight, destScaleGridBottom - s9g.y);
+            drawImage(renderContext, data, sourceX, sourceY3, s9g.x, sourceBottomH, roundedDrawX, roundedDrawY + destScaleGridBottom, s9g.x, destHeight - destScaleGridBottom);
+            drawImage(renderContext, data, sourceX2, sourceY3, s9g.width, sourceBottomH, destX1, roundedDrawY + destScaleGridBottom, destScaleGridRight - s9g.x, destHeight - destScaleGridBottom);
+            drawImage(renderContext, data, sourceX3, sourceY3, sourceRightW, sourceBottomH, roundedDrawX + destScaleGridRight, roundedDrawY + destScaleGridBottom, destWidth - destScaleGridRight, destHeight - destScaleGridBottom);
+            function drawImage(a, b, c, d, e, f, g, h, i, j) {
+                renderFilter.drawImage(a, b, c / texture_scale_factor, d / texture_scale_factor, e, f, g, h, i, j);
+            }
         };
         /**
          * @see egret.DisplayObject.measureBounds
@@ -222,6 +228,7 @@ var egret;
         /**
          * 全部Bitmap是否开启DEBUG模式
          * @member {boolean} egret.Bitmap.debug
+         * @private
          */
         Bitmap.debug = false;
         Bitmap.renderFilter = egret.RenderFilter.getInstance();

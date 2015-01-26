@@ -568,6 +568,6 @@ var egret;
             return SkinnableTextBase;
         })(gui.SkinnableComponent);
         gui.SkinnableTextBase = SkinnableTextBase;
-        SkinnableTextBase.prototype.__class__ = "gui.SkinnableTextBase";
+        SkinnableTextBase.prototype.__class__ = "egret.gui.SkinnableTextBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -29,15 +29,11 @@ var egret;
     var gui;
     (function (gui) {
         /**
-         * @class egret.gui.UILayer
-         * @classdesc
          * UIStage的虚拟子容器
-         * @implements egret.gui.IContainer
          */
         var UILayer = (function () {
             /**
              * 构造函数
-             * @method egret.gui.UILayer#constructor
              * @param owner {IUIStage}
              * @param lowerBoundReference {string}
              * @param upperBoundReference {strin}
@@ -54,29 +50,16 @@ var egret;
                 this.upperBoundReference = upperBoundReference;
             }
             Object.defineProperty(UILayer.prototype, "numElements", {
-                /**
-                 * @member egret.gui.UILayer#numElements
-                 */
                 get: function () {
                     return this.owner[this.upperBoundReference] - this.owner[this.lowerBoundReference];
                 },
                 enumerable: true,
                 configurable: true
             });
-            /**
-             * @method egret.gui.UILayer#getElementAt
-             * @param index {number}
-             * @returns {IVisualElement}
-             */
             UILayer.prototype.getElementAt = function (index) {
                 var retval = this.owner[this.raw_getElementAt](this.owner[this.lowerBoundReference] + index);
                 return retval;
             };
-            /**
-             * @method egret.gui.UILayer#addElement
-             * @param element {IVisualElement}
-             * @returns {IVisualElement}
-             */
             UILayer.prototype.addElement = function (element) {
                 var index = this.owner[this.upperBoundReference];
                 if (element.parent === this.owner)
@@ -86,23 +69,12 @@ var egret;
                 element.ownerChanged(this);
                 return element;
             };
-            /**
-             * @method egret.gui.UILayer#addElementAt
-             * @param element {IVisualElement}
-             * @param index {number}
-             * @returns {IVisualElement}
-             */
             UILayer.prototype.addElementAt = function (element, index) {
                 this.owner[this.upperBoundReference]++;
                 this.owner[this.raw_addElementAt](element, this.owner[this.lowerBoundReference] + index);
                 element.ownerChanged(this);
                 return element;
             };
-            /**
-             * @method egret.gui.UILayer#removeElement
-             * @param element {IVisualElement}
-             * @returns {IVisualElement}
-             */
             UILayer.prototype.removeElement = function (element) {
                 var index = this.owner[this.raw_getElementIndex](element);
                 if (this.owner[this.lowerBoundReference] <= index && index < this.owner[this.upperBoundReference]) {
@@ -112,11 +84,6 @@ var egret;
                 element.ownerChanged(null);
                 return element;
             };
-            /**
-             * @method egret.gui.UILayer#removeElementAt
-             * @param index {number}
-             * @returns {IVisualElement}
-             */
             UILayer.prototype.removeElementAt = function (index) {
                 index += this.owner[this.lowerBoundReference];
                 var element;
@@ -127,27 +94,17 @@ var egret;
                 element.ownerChanged(null);
                 return element;
             };
-            /**
-             * @method egret.gui.UILayer#getElementIndex
-             * @param element {IVisualElement}
-             * @returns {number}
-             */
             UILayer.prototype.getElementIndex = function (element) {
                 var retval = this.owner[this.raw_getElementIndex](element);
                 retval -= this.owner[this.lowerBoundReference];
                 return retval;
             };
-            /**
-             * @method egret.gui.UILayer#setElementIndex
-             * @param element {IVisualElement}
-             * @param index {number}
-             */
             UILayer.prototype.setElementIndex = function (element, index) {
                 this.owner[this.raw_setElementIndex](element, this.owner[this.lowerBoundReference] + index);
             };
             return UILayer;
         })();
         gui.UILayer = UILayer;
-        UILayer.prototype.__class__ = "gui.UILayer";
+        UILayer.prototype.__class__ = "egret.gui.UILayer";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

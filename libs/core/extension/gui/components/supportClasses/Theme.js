@@ -93,7 +93,22 @@ var egret;
                     }
                     return null;
                 }
-                var skinName = skinMap[client.hostComponentKey];
+                var skinName;
+                var hostKey = client.hostComponentKey;
+                if (hostKey) {
+                    skinName = skinMap[hostKey];
+                }
+                else {
+                    var superClass = client;
+                    while (superClass) {
+                        hostKey = egret.getQualifiedClassName(superClass);
+                        skinName = skinMap[hostKey];
+                        if (skinName) {
+                            break;
+                        }
+                        superClass = egret.getDefinitionByName(egret.getQualifiedSuperclassName(superClass));
+                    }
+                }
                 if (!skinName) {
                     return null;
                 }
@@ -108,6 +123,6 @@ var egret;
             return Theme;
         })();
         gui.Theme = Theme;
-        Theme.prototype.__class__ = "gui.Theme";
+        Theme.prototype.__class__ = "egret.gui.Theme";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

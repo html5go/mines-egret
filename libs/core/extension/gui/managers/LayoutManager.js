@@ -322,6 +322,6 @@ var egret;
             return LayoutManager;
         })(egret.EventDispatcher);
         gui.LayoutManager = LayoutManager;
-        LayoutManager.prototype.__class__ = "gui.LayoutManager";
+        LayoutManager.prototype.__class__ = "egret.gui.LayoutManager";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

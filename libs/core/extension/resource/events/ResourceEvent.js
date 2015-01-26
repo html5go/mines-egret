@@ -81,20 +81,30 @@ var RES;
          */
         ResourceEvent.ITEM_LOAD_ERROR = "itemLoadError";
         /**
-         * 配置文件加载并解析完成事件
+         * 配置文件加载并解析完成事件。注意：若有配置文件加载失败，将不会抛出此事件，若要处理配置加载失败，请同时监听CONFIG_LOAD_ERROR事件。
          * @constant {string} RES.ResourceEvent.CONFIG_COMPLETE
          */
         ResourceEvent.CONFIG_COMPLETE = "configComplete";
+        /**
+         * 配置文件加载失败事件
+         * @constant {string} RES.ResourceEvent.CONFIG_COMPLETE
+         */
+        ResourceEvent.CONFIG_LOAD_ERROR = "configLoadError";
         /**
          * 延迟加载组资源加载进度事件
          * @constant {string} RES.ResourceEvent.GROUP_PROGRESS
          */
         ResourceEvent.GROUP_PROGRESS = "groupProgress";
         /**
-         * 延迟加载组资源加载完成事件
+         * 延迟加载组资源加载完成事件。注意：若组内有资源项加载失败，将不会抛出此事件，若要处理组加载失败，请同时监听GROUP_LOAD_ERROR事件。
          * @constant {string} RES.ResourceEvent.GROUP_COMPLETE
          */
         ResourceEvent.GROUP_COMPLETE = "groupComplete";
+        /**
+         * 延迟加载组资源加载失败事件
+         * @constant {string} RES.ResourceEvent.GROUP_LOAD_ERROR
+         */
+        ResourceEvent.GROUP_LOAD_ERROR = "groupLoadError";
         return ResourceEvent;
     })(egret.Event);
     RES.ResourceEvent = ResourceEvent;

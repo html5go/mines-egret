@@ -109,7 +109,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.UIAsset#createChildren
              */
             UIAsset.prototype.createChildren = function () {
                 _super.prototype.createChildren.call(this);
@@ -194,7 +193,6 @@ var egret;
                 }
             };
             /**
-             * @method egret.gui.UIAsset#updateDisplayList
              * @param unscaledWidth {number}
              * @param unscaledHeight {number}
              */
@@ -234,7 +232,6 @@ var egret;
                 _super.prototype._render.call(this, renderContext);
             };
             /**
-             * @see egret.DisplayObject.measureBounds
              * @returns {Rectangle}
              * @private
              */
@@ -252,7 +249,6 @@ var egret;
                 return _super.prototype._measureBounds.call(this);
             };
             /**
-             * @method egret.gui.UIAsset#addChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -261,7 +257,6 @@ var egret;
                 throw (new Error("addChild()" + UIAsset.errorStr + "addElement()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#addChildAt
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -271,7 +266,6 @@ var egret;
                 throw (new Error("addChildAt()" + UIAsset.errorStr + "addElementAt()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#removeChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -280,7 +274,6 @@ var egret;
                 throw (new Error("removeChild()" + UIAsset.errorStr + "removeElement()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#removeChildAt
              * @deprecated
              * @param index {number}
              * @returns {DisplayObject}
@@ -289,7 +282,6 @@ var egret;
                 throw (new Error("removeChildAt()" + UIAsset.errorStr + "removeElementAt()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#setChildIndex
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -298,7 +290,6 @@ var egret;
                 throw (new Error("setChildIndex()" + UIAsset.errorStr + "setElementIndex()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#swapChildren
              * @deprecated
              * @param child1 {DisplayObject}
              * @param child2 {DisplayObject}
@@ -307,7 +298,6 @@ var egret;
                 throw (new Error("swapChildren()" + UIAsset.errorStr + "swapElements()代替"));
             };
             /**
-             * @method egret.gui.UIAsset#swapChildrenAt
              * @deprecated
              * @param index1 {number}
              * @param index2 {number}
@@ -319,6 +309,6 @@ var egret;
             return UIAsset;
         })(gui.UIComponent);
         gui.UIAsset = UIAsset;
-        UIAsset.prototype.__class__ = "gui.UIAsset";
+        UIAsset.prototype.__class__ = "egret.gui.UIAsset";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

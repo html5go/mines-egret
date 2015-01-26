@@ -227,9 +227,6 @@ var egret;
                     this.target.invalidateDisplayList();
                 }
             };
-            /**
-             * @method egret.gui.VerticalLayout#measure
-             */
             VerticalLayout.prototype.measure = function () {
                 _super.prototype.measure.call(this);
                 if (!this.target)
@@ -305,7 +302,6 @@ var egret;
                 this.target.measuredHeight = Math.ceil(measuredHeight + vPadding);
             };
             /**
-             * @method egret.gui.VerticalLayout#updateDisplayList
              * @param width {number}
              * @param height {number}
              */
@@ -380,7 +376,6 @@ var egret;
                 return totalSize;
             };
             /**
-             * @method egret.gui.VerticalLayout#elementAdded
              * @param index {number}
              */
             VerticalLayout.prototype.elementAdded = function (index) {
@@ -389,16 +384,12 @@ var egret;
                 this.elementSizeTable.splice(index, 0, typicalHeight);
             };
             /**
-             * @method egret.gui.VerticalLayout#elementRemoved
              * @param index {number}
              */
             VerticalLayout.prototype.elementRemoved = function (index) {
                 _super.prototype.elementRemoved.call(this, index);
                 this.elementSizeTable.splice(index, 1);
             };
-            /**
-             * @method egret.gui.VerticalLayout#clearVirtualLayoutCache
-             */
             VerticalLayout.prototype.clearVirtualLayoutCache = function () {
                 _super.prototype.clearVirtualLayoutCache.call(this);
                 this.elementSizeTable = [];
@@ -422,7 +413,6 @@ var egret;
                     return this.findIndexAt(y, Math.min(index + 1, i1), i1);
             };
             /**
-             * @method egret.gui.VerticalLayout#scrollPositionChanged
              */
             VerticalLayout.prototype.scrollPositionChanged = function () {
                 _super.prototype.scrollPositionChanged.call(this);
@@ -790,7 +780,7 @@ var egret;
             return VerticalLayout;
         })(gui.LayoutBase);
         gui.VerticalLayout = VerticalLayout;
-        VerticalLayout.prototype.__class__ = "gui.VerticalLayout";
+        VerticalLayout.prototype.__class__ = "egret.gui.VerticalLayout";
         var ChildInfo = (function () {
             function ChildInfo() {
                 /**
@@ -800,6 +790,6 @@ var egret;
             }
             return ChildInfo;
         })();
-        ChildInfo.prototype.__class__ = "ChildInfo";
+        ChildInfo.prototype.__class__ = "egret.gui.ChildInfo";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -44,7 +44,6 @@ var egret;
                 this.thumbAlpha = 0.8;
                 this._autoHideShowAnimat = null;
                 this._animatTargetIsShow = false;
-                this.hostComponentKey = "egret.gui.VScrollBar";
             }
             VScrollBar.prototype._setViewportMetric = function (height, contentHeight) {
                 this._setMaximun(contentHeight - height);
@@ -111,6 +110,6 @@ var egret;
             return VScrollBar;
         })(gui.VSlider);
         gui.VScrollBar = VScrollBar;
-        VScrollBar.prototype.__class__ = "gui.VScrollBar";
+        VScrollBar.prototype.__class__ = "egret.gui.VScrollBar";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

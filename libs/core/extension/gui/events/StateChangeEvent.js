@@ -85,6 +85,6 @@ var egret;
             return StateChangeEvent;
         })(egret.Event);
         gui.StateChangeEvent = StateChangeEvent;
-        StateChangeEvent.prototype.__class__ = "gui.StateChangeEvent";
+        StateChangeEvent.prototype.__class__ = "egret.gui.StateChangeEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -212,7 +212,6 @@ var egret;
             };
             /**
              * 改变高亮的选中项
-             * @method egret.gui.DropDownListBase#_changeHighlightedSelection
              * @param newIndex {number}
              * @param scrollToTop {boolean}
              */
@@ -222,10 +221,6 @@ var egret;
                 this._userProposedSelectedIndex = newIndex;
                 this.itemSelected(this._userProposedSelectedIndex, true);
             };
-            /**
-             * @method egret.gui.DropDownListBase#dataProvider_collectionChangeHandler
-             * @param event {CollectionEvent}
-             */
             DropDownListBase.prototype.dataProvider_collectionChangeHandler = function (event) {
                 _super.prototype.dataProvider_collectionChangeHandler.call(this, event);
                 this._labelChanged = true;
@@ -244,8 +239,6 @@ var egret;
             };
             /**
              * 控制器抛出打开列表事件
-             * @method egret.gui.DropDownListBase#_dropDownController_openHandler
-             * @param event {UIEvent}
              */
             DropDownListBase.prototype._dropDownController_openHandler = function (event) {
                 this.addEventListener(gui.UIEvent.UPDATE_COMPLETE, this._open_updateCompleteHandler, this);
@@ -254,8 +247,6 @@ var egret;
             };
             /**
              * 打开列表后组件一次失效验证全部完成
-             * @method egret.gui.DropDownListBase#_open_updateCompleteHandler
-             * @param event {UIEvent}
              */
             DropDownListBase.prototype._open_updateCompleteHandler = function (event) {
                 this.removeEventListener(gui.UIEvent.UPDATE_COMPLETE, this._open_updateCompleteHandler, this);
@@ -290,6 +281,6 @@ var egret;
             return DropDownListBase;
         })(gui.List);
         gui.DropDownListBase = DropDownListBase;
-        DropDownListBase.prototype.__class__ = "gui.DropDownListBase";
+        DropDownListBase.prototype.__class__ = "egret.gui.DropDownListBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

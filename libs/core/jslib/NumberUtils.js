@@ -32,11 +32,51 @@ var egret;
         NumberUtils.isNumber = function (value) {
             return typeof (value) === "number" && !isNaN(value);
         };
+        NumberUtils.sin = function (value) {
+            value = Math.round(value);
+            value = value % 360;
+            if (value < 0) {
+                value += 360;
+            }
+            if (value < 90) {
+                return egret_sin_map[value];
+            }
+            if (value < 180) {
+                return egret_cos_map[value - 90];
+            }
+            if (value < 270) {
+                return -egret_sin_map[value - 180];
+            }
+            return -egret_cos_map[value - 270];
+        };
+        NumberUtils.cos = function (value) {
+            value = Math.round(value);
+            value = value % 360;
+            if (value < 0) {
+                value += 360;
+            }
+            if (value < 90) {
+                return egret_cos_map[value];
+            }
+            if (value < 180) {
+                return -egret_sin_map[value - 90];
+            }
+            if (value < 270) {
+                return -egret_cos_map[value - 180];
+            }
+            return egret_sin_map[value - 270];
+        };
         return NumberUtils;
     })();
     egret.NumberUtils = NumberUtils;
     NumberUtils.prototype.__class__ = "egret.NumberUtils";
 })(egret || (egret = {}));
+var egret_sin_map = {};
+var egret_cos_map = {};
+for (var i = 0; i <= 90; i++) {
+    egret_sin_map[i] = Math.sin(i * egret.Matrix.DEG_TO_RAD);
+    egret_cos_map[i] = Math.cos(i * egret.Matrix.DEG_TO_RAD);
+}
 //对未提供bind的浏览器实现bind机制
 if (!Function.prototype.bind) {
     Function.prototype.bind = function (oThis) {

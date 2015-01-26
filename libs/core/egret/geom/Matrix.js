@@ -42,7 +42,6 @@ var egret;
         __extends(Matrix, _super);
         /**
          * @method egret.Matrix#constructor
-         * @constructor
          * @param a {number} 缩放或旋转图像时影响像素沿 x 轴定位的值。
          * @param b {number} 旋转或倾斜图像时影响像素沿 y 轴定位的值。
          * @param c {number} 旋转或倾斜图像时影响像素沿 x 轴定位的值。
@@ -65,10 +64,6 @@ var egret;
             this.tx = tx;
             this.ty = ty;
         }
-        /**
-         * @member {any} egret.Matrix#
-         */
-        // public methods:
         /**
          * 前置矩阵
          * @method egret.Matrix#prepend
@@ -136,9 +131,9 @@ var egret;
          */
         Matrix.prototype.prependTransform = function (x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
             if (rotation % 360) {
-                var r = rotation * Matrix.DEG_TO_RAD;
-                var cos = Math.cos(r);
-                var sin = Math.sin(r);
+                var r = rotation; // * Matrix.DEG_TO_RAD;
+                var cos = egret.NumberUtils.cos(r);
+                var sin = egret.NumberUtils.sin(r);
             }
             else {
                 cos = 1;
@@ -151,10 +146,10 @@ var egret;
             }
             if (skewX || skewY) {
                 // TODO: can this be combined into a single prepend operation?
-                skewX *= Matrix.DEG_TO_RAD;
-                skewY *= Matrix.DEG_TO_RAD;
+                //                skewX *= Matrix.DEG_TO_RAD;
+                //                skewY *= Matrix.DEG_TO_RAD;
                 this.prepend(cos * scaleX, sin * scaleX, -sin * scaleY, cos * scaleY, 0, 0);
-                this.prepend(Math.cos(skewY), Math.sin(skewY), -Math.sin(skewX), Math.cos(skewX), x, y);
+                this.prepend(egret.NumberUtils.cos(skewY), egret.NumberUtils.sin(skewY), -egret.NumberUtils.sin(skewX), egret.NumberUtils.cos(skewX), x, y);
             }
             else {
                 this.prepend(cos * scaleX, sin * scaleX, -sin * scaleY, cos * scaleY, x, y);
@@ -177,9 +172,9 @@ var egret;
          */
         Matrix.prototype.appendTransform = function (x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
             if (rotation % 360) {
-                var r = rotation * Matrix.DEG_TO_RAD;
-                var cos = Math.cos(r);
-                var sin = Math.sin(r);
+                var r = rotation; // * Matrix.DEG_TO_RAD;
+                var cos = egret.NumberUtils.cos(r);
+                var sin = egret.NumberUtils.sin(r);
             }
             else {
                 cos = 1;
@@ -187,9 +182,9 @@ var egret;
             }
             if (skewX || skewY) {
                 // TODO: can this be combined into a single append?
-                skewX *= Matrix.DEG_TO_RAD;
-                skewY *= Matrix.DEG_TO_RAD;
-                this.append(Math.cos(skewY), Math.sin(skewY), -Math.sin(skewX), Math.cos(skewX), x, y);
+                //                skewX *= Matrix.DEG_TO_RAD;
+                //                skewY *= Matrix.DEG_TO_RAD;
+                this.append(egret.NumberUtils.cos(skewY), egret.NumberUtils.sin(skewY), -egret.NumberUtils.sin(skewX), egret.NumberUtils.cos(skewX), x, y);
                 this.append(cos * scaleX, sin * scaleX, -sin * scaleY, cos * scaleY, 0, 0);
             }
             else {
@@ -231,9 +226,9 @@ var egret;
          * @returns {egret.Matrix}
          */
         Matrix.prototype.skew = function (skewX, skewY) {
-            skewX = skewX * Matrix.DEG_TO_RAD;
-            skewY = skewY * Matrix.DEG_TO_RAD;
-            this.append(Math.cos(skewY), Math.sin(skewY), -Math.sin(skewX), Math.cos(skewX), 0, 0);
+            //            skewX = skewX * Matrix.DEG_TO_RAD;
+            //            skewY = skewY * Matrix.DEG_TO_RAD;
+            this.append(egret.NumberUtils.cos(skewY), egret.NumberUtils.sin(skewY), -egret.NumberUtils.sin(skewX), egret.NumberUtils.cos(skewX), 0, 0);
             return this;
         };
         /**
@@ -356,10 +351,6 @@ var egret;
             }
             return this.array;
         };
-        /**
-         * @member {any} egret.Matrix.
-         */
-        // static public properties:
         Matrix.identity = new Matrix();
         Matrix.DEG_TO_RAD = Math.PI / 180;
         return Matrix;

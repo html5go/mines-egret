@@ -86,6 +86,6 @@ var egret;
             return IndexChangeEvent;
         })(egret.Event);
         gui.IndexChangeEvent = IndexChangeEvent;
-        IndexChangeEvent.prototype.__class__ = "gui.IndexChangeEvent";
+        IndexChangeEvent.prototype.__class__ = "egret.gui.IndexChangeEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

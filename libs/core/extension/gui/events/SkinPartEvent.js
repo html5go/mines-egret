@@ -85,6 +85,6 @@ var egret;
             return SkinPartEvent;
         })(egret.Event);
         gui.SkinPartEvent = SkinPartEvent;
-        SkinPartEvent.prototype.__class__ = "gui.SkinPartEvent";
+        SkinPartEvent.prototype.__class__ = "egret.gui.SkinPartEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

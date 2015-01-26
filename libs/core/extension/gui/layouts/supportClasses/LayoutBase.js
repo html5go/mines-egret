@@ -153,6 +153,6 @@ var egret;
             return LayoutBase;
         })(egret.EventDispatcher);
         gui.LayoutBase = LayoutBase;
-        LayoutBase.prototype.__class__ = "gui.LayoutBase";
+        LayoutBase.prototype.__class__ = "egret.gui.LayoutBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

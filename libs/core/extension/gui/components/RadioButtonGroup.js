@@ -145,7 +145,6 @@ var egret;
             };
             /**
              * 添加单选按钮到组内
-             * @method egret.gui.RadioButtonGroup#_addInstance
              * @param instance {RadioButton}
              */
             RadioButtonGroup.prototype._addInstance = function (instance) {
@@ -192,7 +191,6 @@ var egret;
             };
             /**
              * 从组里移除单选按钮
-             * @method egret.gui.RadioButtonGroup#_removeInstance
              * @param instance {RadioButton}
              */
             RadioButtonGroup.prototype._removeInstance = function (instance) {
@@ -228,7 +226,6 @@ var egret;
             };
             /**
              * 设置选中的单选按钮
-             * @method egret.gui.RadioButtonGroup#_setSelection
              * @param value {RadioButton}
              * @param fireChange {boolean}
              */
@@ -294,6 +291,6 @@ var egret;
             return RadioButtonGroup;
         })(egret.EventDispatcher);
         gui.RadioButtonGroup = RadioButtonGroup;
-        RadioButtonGroup.prototype.__class__ = "gui.RadioButtonGroup";
+        RadioButtonGroup.prototype.__class__ = "egret.gui.RadioButtonGroup";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

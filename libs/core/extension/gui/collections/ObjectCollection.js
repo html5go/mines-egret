@@ -355,6 +355,6 @@ var egret;
             return ObjectCollection;
         })(egret.EventDispatcher);
         gui.ObjectCollection = ObjectCollection;
-        ObjectCollection.prototype.__class__ = "gui.ObjectCollection";
+        ObjectCollection.prototype.__class__ = "egret.gui.ObjectCollection";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

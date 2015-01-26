@@ -262,26 +262,18 @@ var egret;
             return DepthQueue;
         })();
         gui.DepthQueue = DepthQueue;
-        DepthQueue.prototype.__class__ = "gui.DepthQueue";
+        DepthQueue.prototype.__class__ = "egret.gui.DepthQueue";
         /**
-         * @class egret.gui.DepthBin
-         * @classdesc
          * 列表项
          */
         var DepthBin = (function () {
             function DepthBin() {
-                /**
-                 * @member egret.DepthBin#length
-                 */
                 this.length = 0;
-                /**
-                 * @member egret.DepthBin#items
-                 */
                 this.items = [];
             }
             return DepthBin;
         })();
         gui.DepthBin = DepthBin;
-        DepthBin.prototype.__class__ = "gui.DepthBin";
+        DepthBin.prototype.__class__ = "egret.gui.DepthBin";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

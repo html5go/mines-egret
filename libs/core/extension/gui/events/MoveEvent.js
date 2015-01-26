@@ -79,6 +79,6 @@ var egret;
             return MoveEvent;
         })(egret.Event);
         gui.MoveEvent = MoveEvent;
-        MoveEvent.prototype.__class__ = "gui.MoveEvent";
+        MoveEvent.prototype.__class__ = "egret.gui.MoveEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

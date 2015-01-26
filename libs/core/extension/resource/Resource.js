@@ -241,6 +241,7 @@ var RES;
             this.resLoader.callBack = this.onResourceItemComp;
             this.resLoader.resInstance = this;
             this.resLoader.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
+            this.resLoader.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
         };
         /**
          * 开始加载配置
@@ -298,7 +299,11 @@ var RES;
          */
         Resource.prototype.loadGroup = function (name, priority) {
             if (priority === void 0) { priority = 0; }
-            if (this.loadedGroups.indexOf(name) != -1 || this.resLoader.isGroupInLoading(name))
+            if (this.loadedGroups.indexOf(name) != -1) {
+                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, name);
+                return;
+            }
+            if (this.resLoader.isGroupInLoading(name))
                 return;
             if (this.configComplete) {
                 var group = this.resConfig.getGroupByName(name);
@@ -353,6 +358,18 @@ var RES;
             }
             else {
                 this.loadedGroups.push(event.groupName);
+                this.dispatchEvent(event);
+            }
+        };
+        /**
+         * 队列加载失败事件
+         */
+        Resource.prototype.onGroupError = function (event) {
+            if (event.groupName == Resource.GROUP_CONFIG) {
+                this.loadingConfigList = null;
+                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
+            }
+            else {
                 this.dispatchEvent(event);
             }
         };
@@ -564,7 +581,7 @@ var RES;
         Resource.GROUP_CONFIG = "RES__CONFIG";
         return Resource;
     })(egret.EventDispatcher);
-    Resource.prototype.__class__ = "Resource";
+    Resource.prototype.__class__ = "RES.Resource";
     /**
      * Resource单例
      */

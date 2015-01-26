@@ -182,6 +182,6 @@ var egret;
             return SkinBasicLayout;
         })(egret.HashObject);
         gui.SkinBasicLayout = SkinBasicLayout;
-        SkinBasicLayout.prototype.__class__ = "gui.SkinBasicLayout";
+        SkinBasicLayout.prototype.__class__ = "egret.gui.SkinBasicLayout";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

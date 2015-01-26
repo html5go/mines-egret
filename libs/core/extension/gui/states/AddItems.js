@@ -150,6 +150,6 @@ var egret;
             return AddItems;
         })(gui.OverrideBase);
         gui.AddItems = AddItems;
-        AddItems.prototype.__class__ = "gui.AddItems";
+        AddItems.prototype.__class__ = "egret.gui.AddItems";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

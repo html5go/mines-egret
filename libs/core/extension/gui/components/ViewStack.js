@@ -107,6 +107,7 @@ var egret;
             });
             Object.defineProperty(ViewStack.prototype, "selectedChild", {
                 /**
+                 * 当前选中的子项
                  * @member egret.gui.ViewStack#selectedChild
                  */
                 get: function () {
@@ -125,6 +126,7 @@ var egret;
             });
             Object.defineProperty(ViewStack.prototype, "selectedIndex", {
                 /**
+                 * 当前选中子项的索引
                  * @member egret.gui.ViewStack#selectedIndex
                  */
                 get: function () {
@@ -154,7 +156,6 @@ var egret;
             };
             /**
              * 添加一个显示元素到容器
-             * @method egret.gui.ViewStack#_elementAdded
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -183,7 +184,6 @@ var egret;
             };
             /**
              * 从容器移除一个显示元素
-             * @method egret.gui.ViewStack#_elementRemoved
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -210,9 +210,6 @@ var egret;
                 }
                 this.dispatchCoEvent(gui.CollectionEventKind.REMOVE, index, -1, [element.name]);
             };
-            /**
-             * @method egret.gui.ViewStack#commitProperties
-             */
             ViewStack.prototype.commitProperties = function () {
                 _super.prototype.commitProperties.call(this);
                 if (this.proposedSelectedIndex != ViewStack.NO_PROPOSED_SELECTION) {
@@ -262,6 +259,7 @@ var egret;
             };
             Object.defineProperty(ViewStack.prototype, "length", {
                 /**
+                 * 子项数量
                  * @member egret.gui.ViewStack#length
                  */
                 get: function () {
@@ -271,7 +269,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.ViewStack#getItemAt
              * @param index {number}
              * @returns {any}
              */
@@ -282,7 +279,6 @@ var egret;
                 return "";
             };
             /**
-             * @method egret.gui.ViewStack#getItemIndex
              * @param item {any}
              * @returns {number}
              */
@@ -314,6 +310,6 @@ var egret;
             return ViewStack;
         })(gui.Group);
         gui.ViewStack = ViewStack;
-        ViewStack.prototype.__class__ = "gui.ViewStack";
+        ViewStack.prototype.__class__ = "egret.gui.ViewStack";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

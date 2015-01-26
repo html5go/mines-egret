@@ -268,7 +268,7 @@ var egret;
             return PopUpManagerImpl;
         })(egret.EventDispatcher);
         gui.PopUpManagerImpl = PopUpManagerImpl;
-        PopUpManagerImpl.prototype.__class__ = "gui.PopUpManagerImpl";
+        PopUpManagerImpl.prototype.__class__ = "egret.gui.PopUpManagerImpl";
         var PopUpData = (function () {
             /**
              * @method egret.PopUpData#constructor
@@ -281,6 +281,6 @@ var egret;
             }
             return PopUpData;
         })();
-        PopUpData.prototype.__class__ = "PopUpData";
+        PopUpData.prototype.__class__ = "egret.gui.PopUpData";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

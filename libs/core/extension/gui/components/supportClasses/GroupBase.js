@@ -55,12 +55,10 @@ var egret;
                 this._verticalScrollPosition = 0;
                 /**
                  * 在更新显示列表时是否需要更新布局标志
-                 * @member egret.gui.GroupBase#_layoutInvalidateDisplayListFlag
                  */
                 this._layoutInvalidateDisplayListFlag = false;
                 /**
                  * 在测量尺寸时是否需要测量布局的标志
-                 * @member egret.gui.GroupBase#_layoutInvalidateSizeFlag
                  */
                 this._layoutInvalidateSizeFlag = false;
                 this.touchEnabled = false;
@@ -258,7 +256,6 @@ var egret;
             };
             /**
              * 标记需要更新显示列表但不需要更新布局
-             * @method egret.gui.GroupBase#_invalidateDisplayListExceptLayout
              */
             GroupBase.prototype._invalidateDisplayListExceptLayout = function () {
                 _super.prototype.invalidateDisplayList.call(this);
@@ -270,16 +267,12 @@ var egret;
                 _super.prototype.invalidateDisplayList.call(this);
                 this._layoutInvalidateDisplayListFlag = true;
             };
-            /**
-             * @method egret.gui.GroupBase#_childXYChanged
-             */
             GroupBase.prototype._childXYChanged = function () {
                 this.invalidateSize();
                 this.invalidateDisplayList();
             };
             /**
              * 标记需要更新显示列表但不需要更新布局
-             * @method egret.gui.GroupBase#_invalidateSizeExceptLayout
              */
             GroupBase.prototype._invalidateSizeExceptLayout = function () {
                 _super.prototype.invalidateSize.call(this);
@@ -291,11 +284,6 @@ var egret;
                 _super.prototype.invalidateSize.call(this);
                 this._layoutInvalidateSizeFlag = true;
             };
-            /**
-             * @method egret.gui.GroupBase#updateDisplayList
-             * @param unscaledWidth {number}
-             * @param unscaledHeight {number}
-             */
             GroupBase.prototype.updateDisplayList = function (unscaledWidth, unscaledHeight) {
                 _super.prototype.updateDisplayList.call(this, unscaledWidth, unscaledHeight);
                 if (this._layoutInvalidateDisplayListFlag && this._layout) {
@@ -384,6 +372,6 @@ var egret;
             return GroupBase;
         })(gui.UIComponent);
         gui.GroupBase = GroupBase;
-        GroupBase.prototype.__class__ = "gui.GroupBase";
+        GroupBase.prototype.__class__ = "egret.gui.GroupBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

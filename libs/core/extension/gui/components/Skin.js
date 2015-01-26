@@ -37,8 +37,7 @@ var egret;
         /**
          * @class egret.gui.Skin
          * @classdesc
-         * 含有视图状态功能的皮肤基类。注意：为了减少嵌套层级，此皮肤没有继承显示对象，若需要显示对象版本皮肤，请使用Skin。
-         * @see org.flexlite.domUI.components.supportClasses.Skin
+         * 含有视图状态功能的皮肤基类。
          * @extends egret.EventDispatcher
          * @implements egret.gui.IStateClient
          * @implements egret.gui.ISkin
@@ -129,9 +128,6 @@ var egret;
                 configurable: true
             });
             Object.defineProperty(Skin.prototype, "preferredWidth", {
-                /**
-                 * @member egret.gui.Skin#preferredWidth
-                 */
                 get: function () {
                     return this._hasWidthSet ? this._width : this.measuredWidth;
                 },
@@ -139,9 +135,6 @@ var egret;
                 configurable: true
             });
             Object.defineProperty(Skin.prototype, "preferredHeight", {
-                /**
-                 * @member egret.gui.Skin#preferredHeight
-                 */
                 get: function () {
                     return this._hasHeightSet ? this._height : this.measuredHeight;
                 },
@@ -346,7 +339,6 @@ var egret;
             };
             /**
              * 添加一个显示元素到容器
-             * @method egret.gui.Skin#_elementAdded
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -367,7 +359,6 @@ var egret;
             };
             /**
              * 从容器移除一个显示元素
-             * @method egret.gui.Skin#_elementRemoved
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -568,6 +559,6 @@ var egret;
             return Skin;
         })(egret.EventDispatcher);
         gui.Skin = Skin;
-        Skin.prototype.__class__ = "gui.Skin";
+        Skin.prototype.__class__ = "egret.gui.Skin";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -49,6 +49,6 @@ var egret;
             return PropertyChangeEventKind;
         })();
         gui.PropertyChangeEventKind = PropertyChangeEventKind;
-        PropertyChangeEventKind.prototype.__class__ = "gui.PropertyChangeEventKind";
+        PropertyChangeEventKind.prototype.__class__ = "egret.gui.PropertyChangeEventKind";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

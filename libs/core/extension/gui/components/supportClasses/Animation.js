@@ -381,6 +381,6 @@ var egret;
             return Animation;
         })();
         gui.Animation = Animation;
-        Animation.prototype.__class__ = "gui.Animation";
+        Animation.prototype.__class__ = "egret.gui.Animation";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

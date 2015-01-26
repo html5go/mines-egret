@@ -54,6 +54,6 @@ var egret;
             return ScrollPolicy;
         })();
         gui.ScrollPolicy = ScrollPolicy;
-        ScrollPolicy.prototype.__class__ = "gui.ScrollPolicy";
+        ScrollPolicy.prototype.__class__ = "egret.gui.ScrollPolicy";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

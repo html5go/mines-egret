@@ -23,7 +23,6 @@ var egret;
                  * 垂直滚动条策略改变标志
                  */
                 this.verticalScrollPolicyChanged = false;
-                this.hostComponentKey = "egret.gui.TextArea";
             }
             Object.defineProperty(TextArea.prototype, "widthInChars", {
                 /**
@@ -132,6 +131,6 @@ var egret;
             return TextArea;
         })(gui.SkinnableTextBase);
         gui.TextArea = TextArea;
-        TextArea.prototype.__class__ = "gui.TextArea";
+        TextArea.prototype.__class__ = "egret.gui.TextArea";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

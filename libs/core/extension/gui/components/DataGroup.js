@@ -900,6 +900,6 @@ var egret;
             return DataGroup;
         })(gui.GroupBase);
         gui.DataGroup = DataGroup;
-        DataGroup.prototype.__class__ = "gui.DataGroup";
+        DataGroup.prototype.__class__ = "egret.gui.DataGroup";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

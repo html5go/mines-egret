@@ -35,10 +35,7 @@ var egret;
     var gui;
     (function (gui) {
         /**
-            * @class egret.gui.ViewportScroller
-            * @classdesc
             * 适用Viewport的滑动类
-            * @extends egret.Scroller
             */
         var ViewportScroller = (function (_super) {
             __extends(ViewportScroller, _super);
@@ -47,25 +44,29 @@ var egret;
                 */
             function ViewportScroller(content) {
                 _super.call(this, content);
-                this.content = content;
                 this._width = 0;
                 this._height = 0;
-                this._content = content;
             }
+            ViewportScroller.prototype.setContent = function (content) {
+                _super.prototype.setContent.call(this, content);
+                var viewport = this._content;
+                this._scrollLeft = viewport.horizontalScrollPosition;
+                this._scrollTop = viewport.verticalScrollPosition;
+            };
             ViewportScroller.prototype._updateContentPosition = function () {
-                var content = this.content;
+                var content = this._content;
                 content.horizontalScrollPosition = this._scrollLeft;
                 content.verticalScrollPosition = this._scrollTop;
                 content.setLayoutBoundsSize(this._width, this._height);
                 this.dispatchEvent(new egret.Event(egret.Event.CHANGE));
             };
             ViewportScroller.prototype.getMaxScrollLeft = function () {
-                var content = this.content;
+                var content = this._content;
                 var max = content.contentWidth - content.width;
                 return Math.max(max, 0);
             };
             ViewportScroller.prototype.getMaxScrollTop = function () {
-                var content = this.content;
+                var content = this._content;
                 var max = content.contentHeight - content.height;
                 return Math.max(max, 0);
             };
@@ -76,14 +77,18 @@ var egret;
                 return this._content.contentHeight;
             };
             ViewportScroller.prototype._setHeight = function (value) {
+                this._explicitHeight = value;
+                this._hasHeightSet = egret.NumberUtils.isNumber(value);
                 this._height = value;
-                var content = this.content;
-                content.setLayoutBoundsSize(this._width, this._height);
+                var content = this._content;
+                content && content.setLayoutBoundsSize(this._width, this._height);
             };
             ViewportScroller.prototype._setWidth = function (value) {
+                this._explicitWidth = value;
+                this._hasWidthSet = egret.NumberUtils.isNumber(value);
                 this._width = value;
-                var content = this.content;
-                content.setLayoutBoundsSize(this._width, this._height);
+                var content = this._content;
+                content && content.setLayoutBoundsSize(this._width, this._height);
             };
             Object.defineProperty(ViewportScroller.prototype, "height", {
                 get: function () {
@@ -115,7 +120,7 @@ var egret;
             };
             return ViewportScroller;
         })(egret.ScrollView);
-        ViewportScroller.prototype.__class__ = "ViewportScroller";
+        ViewportScroller.prototype.__class__ = "egret.gui.ViewportScroller";
         /**
          * @class egret.gui.Scroller
          * @classdesc
@@ -133,32 +138,7 @@ var egret;
                 _super.call(this);
                 this._verticalScrollPolicy = "auto";
                 this._horizontalScrollPolicy = "auto";
-                this.hostComponentKey = "egret.gui.Scroller";
             }
-            Object.defineProperty(Scroller.prototype, "hBar", {
-                get: function () {
-                    egret.Logger.warning("Scroller.hBar已废弃，请使用Scroller.horizontalScrollBar");
-                    return this.horizontalScrollBar;
-                },
-                set: function (value) {
-                    egret.Logger.warning("Scroller.hBar已废弃，请使用Scroller.horizontalScrollBar设置");
-                    this.horizontalScrollBar = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(Scroller.prototype, "vBar", {
-                get: function () {
-                    egret.Logger.warning("Scroller.vBar已废弃，请使用Scroller.verticalScrollBar");
-                    return this.verticalScrollBar;
-                },
-                set: function (value) {
-                    egret.Logger.warning("Scroller.vBar已废弃，请使用Scroller.verticalScrollBar设置");
-                    this.verticalScrollBar = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
             /**
              * @method egret.gui.Scroller#measure
              */
@@ -169,7 +149,6 @@ var egret;
                 this.measuredHeight = this._viewport.preferredHeight;
             };
             /**
-             * @method egret.gui.Scroller#updateDisplayList
              * @param unscaledWidth {number}
              * @param unscaledHeight {number}
              */
@@ -254,15 +233,22 @@ var egret;
              * 安装并初始化视域组件
              */
             Scroller.prototype.installViewport = function () {
-                if (this.viewport) {
-                    this.viewport.clipAndEnableScrolling = true;
-                    this._scroller = new ViewportScroller(this.viewport);
-                    this._scroller.addEventListener(egret.Event.CHANGE, this._scrollerChangedHandler, this);
+                var viewport = this.viewport;
+                if (this._scroller == null) {
+                    this._scroller = new ViewportScroller(viewport);
                     this._scroller.horizontalScrollPolicy = this._horizontalScrollPolicy;
                     this._scroller.verticalScrollPolicy = this._verticalScrollPolicy;
+                    this._scroller.addEventListener(egret.Event.CHANGE, this._scrollerChangedHandler, this);
                     this._addToDisplayListAt(this._scroller, 0);
                 }
-                //this._addScrollBars();
+                if (viewport) {
+                    viewport.clipAndEnableScrolling = true;
+                    this._scroller.setContent(viewport);
+                    viewport.addEventListener(egret.gui.PropertyChangeEvent.PROPERTY_CHANGE, this._viewportChangedHandler, this);
+                    if ("_addToStyleProtoChain" in viewport) {
+                        viewport["_addToStyleProtoChain"](this._styleProtoChain);
+                    }
+                }
             };
             Scroller.prototype._onAddToStage = function () {
                 _super.prototype._onAddToStage.call(this);
@@ -274,9 +260,17 @@ var egret;
             Scroller.prototype.uninstallViewport = function () {
                 if (this.viewport) {
                     this.viewport.clipAndEnableScrolling = false;
-                    this._removeFromDisplayList(this.viewport);
+                    this.viewport.removeEventListener(egret.gui.PropertyChangeEvent.PROPERTY_CHANGE, this._viewportChangedHandler, this);
                 }
-                this._removeScrollBars();
+                if (this._scroller) {
+                    this._scroller.removeContent();
+                }
+            };
+            Scroller.prototype._viewportChangedHandler = function (e) {
+                if (e.property == "horizontalScrollPosition")
+                    this.setViewportHScrollPosition(this.viewport.horizontalScrollPosition);
+                if (e.property == "verticalScrollPosition")
+                    this.setViewportVScrollPosition(this.viewport.verticalScrollPosition);
             };
             Scroller.prototype._scrollerChangedHandler = function (e) {
                 this.setViewportHScrollPosition(this._scroller.scrollLeft);
@@ -335,7 +329,6 @@ var egret;
                 throw new RangeError("索引:\"" + index + "\"超出可视元素索引范围");
             };
             /**
-             * @method egret.gui.Scroller#getElementAt
              * @param index {number}
              * @returns {IVisualElement}
              */
@@ -347,7 +340,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#getElementIndex
              * @param element {IVisualElement}
              * @returns {number}
              */
@@ -358,7 +350,6 @@ var egret;
                     return -1;
             };
             /**
-             * @method egret.gui.Scroller#containsElement
              * @param element {IVisualElement}
              * @returns {boolean}
              */
@@ -371,7 +362,6 @@ var egret;
                 throw new Error("此方法在Scroller组件内不可用!");
             };
             /**
-             * @method egret.gui.Scroller#addElement
              * @deprecated
              * @param element {IVisualElement}
              * @returns {IVisualElement}
@@ -381,7 +371,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#addElementAt
              * @deprecated
              * @param element {IVisualElement}
              * @param index {number}
@@ -392,7 +381,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#removeElement
              * @deprecated
              * @param element {IVisualElement}
              * @returns {IVisualElement}
@@ -402,7 +390,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#removeElementAt
              * @deprecated
              * @param index {number}
              * @returns {IVisualElement}
@@ -412,14 +399,12 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#removeAllElements
              * @deprecated
              */
             Scroller.prototype.removeAllElements = function () {
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#setElementIndex
              * @deprecated
              * @param element {IVisualElement}
              * @param index {number}
@@ -428,7 +413,6 @@ var egret;
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#swapElements
              * @deprecated
              * @param element1 {IVisualElement}
              * @param element2 {IVisualElement}
@@ -437,7 +421,6 @@ var egret;
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#swapElementsAt
              * @deprecated
              * @param index1 {number}
              * @param index2 {number}
@@ -446,7 +429,6 @@ var egret;
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#addChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -456,7 +438,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#addChildAt
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -467,7 +448,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#removeChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -477,7 +457,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#removeChildAt
              * @deprecated
              * @param index {number}
              * @returns {DisplayObject}
@@ -487,7 +466,6 @@ var egret;
                 return null;
             };
             /**
-             * @method egret.gui.Scroller#setChildIndex
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -496,7 +474,6 @@ var egret;
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#swapChildren
              * @deprecated
              * @param child1 {DisplayObject}
              * @param child2 {DisplayObject}
@@ -505,7 +482,6 @@ var egret;
                 this.throwNotSupportedError();
             };
             /**
-             * @method egret.gui.Scroller#swapChildrenAt
              * @deprecated
              * @param index1 {number}
              * @param index2 {number}
@@ -520,10 +496,16 @@ var egret;
                     }
                     return;
                 }
+                if (!this.horizontalScrollBar)
+                    return;
                 var bar = this.horizontalScrollBar;
                 bar.addEventListener(egret.Event.CHANGE, this.hBarChanged, this, false);
                 bar._setViewportMetric(this._viewport.width, this._viewport.contentWidth);
                 this.horizontalScrollBar = bar;
+                var host = bar.owner;
+                if (host && "removeElement" in host) {
+                    host.removeElement(bar);
+                }
                 this._addToDisplayList(this.horizontalScrollBar);
             };
             Scroller.prototype._checkVbar = function () {
@@ -533,15 +515,20 @@ var egret;
                     }
                     return;
                 }
+                if (!this.verticalScrollBar)
+                    return;
                 var vbar = this.verticalScrollBar;
                 vbar.addEventListener(egret.Event.CHANGE, this.vBarChanged, this, false);
                 vbar._setViewportMetric(this._viewport.height, this._viewport.contentHeight);
                 this.verticalScrollBar = vbar;
+                var host = vbar.owner;
+                if (host && "removeElement" in host) {
+                    host.removeElement(vbar);
+                }
                 this._addToDisplayList(this.verticalScrollBar);
             };
             /**
              * 若皮肤是ISkin,则调用此方法附加皮肤中的公共部件
-             * @method egret.gui.Scroller#partAdded
              * @param partName {string}
              * @param instance {any}
              */
@@ -572,9 +559,48 @@ var egret;
             Scroller.prototype.vBarChanged = function (e) {
                 this.setViewportVScrollPosition(this.verticalScrollBar.getPosition());
             };
+            Scroller.prototype._createOwnStyleProtoChain = function (chain) {
+                chain = _super.prototype._createOwnStyleProtoChain.call(this, chain);
+                var viewport = this._viewport;
+                if (viewport && "_addToStyleProtoChain" in viewport) {
+                    viewport["_addToStyleProtoChain"](chain);
+                }
+                return chain;
+            };
+            /**
+             * 添加到父级容器的样式原型链
+             */
+            Scroller.prototype.regenerateStyleCache = function (parentChain) {
+                _super.prototype.regenerateStyleCache.call(this, parentChain);
+                var viewport = this._viewport;
+                if (viewport && "regenerateStyleCache" in viewport) {
+                    viewport["regenerateStyleCache"](parentChain);
+                }
+            };
+            /**
+             * 通知项列表样式发生改变
+             */
+            Scroller.prototype.notifyStyleChangeInChildren = function (styleProp) {
+                _super.prototype.notifyStyleChangeInChildren.call(this, styleProp);
+                var viewport = this._viewport;
+                if (viewport && "styleChanged" in viewport) {
+                    viewport["styleChanged"](styleProp);
+                    viewport["notifyStyleChangeInChildren"](styleProp);
+                }
+            };
+            /**
+             * 更新子项的nestLevel属性
+             */
+            Scroller.prototype._updateChildrenNestLevel = function () {
+                _super.prototype._updateChildrenNestLevel.call(this);
+                var viewport = this._viewport;
+                if (viewport && "nestLevel" in viewport) {
+                    viewport["nestLevel"] = this.nestLevel + 1;
+                }
+            };
             return Scroller;
         })(gui.SkinnableComponent);
         gui.Scroller = Scroller;
-        Scroller.prototype.__class__ = "gui.Scroller";
+        Scroller.prototype.__class__ = "egret.gui.Scroller";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

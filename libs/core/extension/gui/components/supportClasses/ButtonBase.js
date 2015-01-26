@@ -380,11 +380,6 @@ var egret;
                     return "over";
                 return "up";
             };
-            /**
-             * @method egret.gui.ButtonBase#partAdded
-             * @param partName {string}
-             * @param instance {any}
-             */
             ButtonBase.prototype.partAdded = function (partName, instance) {
                 _super.prototype.partAdded.call(this, partName, instance);
                 if (instance == this.labelDisplay) {
@@ -394,6 +389,6 @@ var egret;
             return ButtonBase;
         })(gui.SkinnableComponent);
         gui.ButtonBase = ButtonBase;
-        ButtonBase.prototype.__class__ = "gui.ButtonBase";
+        ButtonBase.prototype.__class__ = "egret.gui.ButtonBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

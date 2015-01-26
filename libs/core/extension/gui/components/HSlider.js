@@ -48,14 +48,7 @@ var egret;
              */
             function HSlider() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.HSlider";
             }
-            /**
-             * @method egret.gui.HSlider#pointToValue
-             * @param x {number}
-             * @param y {number}
-             * @returns {number}
-             */
             HSlider.prototype.pointToValue = function (x, y) {
                 if (!this.thumb || !this.track)
                     return 0;
@@ -63,9 +56,6 @@ var egret;
                 var thumbRange = this.track.layoutBoundsWidth - this.thumb.layoutBoundsWidth;
                 return this.minimum + ((thumbRange != 0) ? (x / thumbRange) * range : 0);
             };
-            /**
-             * @method egret.gui.HSlider#updateSkinDisplayList
-             */
             HSlider.prototype.updateSkinDisplayList = function () {
                 if (!this.thumb || !this.track)
                     return;
@@ -86,6 +76,6 @@ var egret;
             return HSlider;
         })(gui.SliderBase);
         gui.HSlider = HSlider;
-        HSlider.prototype.__class__ = "gui.HSlider";
+        HSlider.prototype.__class__ = "egret.gui.HSlider";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

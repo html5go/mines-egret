@@ -393,6 +393,6 @@ var egret;
             return DropDownController;
         })(egret.EventDispatcher);
         gui.DropDownController = DropDownController;
-        DropDownController.prototype.__class__ = "gui.DropDownController";
+        DropDownController.prototype.__class__ = "egret.gui.DropDownController";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

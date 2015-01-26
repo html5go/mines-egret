@@ -78,6 +78,6 @@ var egret;
             return LayoutUtil;
         })();
         gui.LayoutUtil = LayoutUtil;
-        LayoutUtil.prototype.__class__ = "gui.LayoutUtil";
+        LayoutUtil.prototype.__class__ = "egret.gui.LayoutUtil";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

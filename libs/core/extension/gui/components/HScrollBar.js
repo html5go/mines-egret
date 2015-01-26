@@ -44,7 +44,6 @@ var egret;
                 this.thumbAlpha = 0.8;
                 this._autoHideShowAnimat = null;
                 this._animatTargetIsShow = false;
-                this.hostComponentKey = "egret.gui.HScrollBar";
             }
             HScrollBar.prototype._setViewportMetric = function (width, contentWidth) {
                 this._setMaximun(contentWidth - width);
@@ -104,6 +103,6 @@ var egret;
             return HScrollBar;
         })(gui.HSlider);
         gui.HScrollBar = HScrollBar;
-        HScrollBar.prototype.__class__ = "gui.HScrollBar";
+        HScrollBar.prototype.__class__ = "egret.gui.HScrollBar";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

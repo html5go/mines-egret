@@ -62,12 +62,10 @@ var egret;
                 this._selectedIndex = ListBase.NO_SELECTION;
                 /**
                  * 是否允许自定义的选中项
-                 * @member egret.gui.ListBase#_allowCustomSelectedItem
                  */
                 this._allowCustomSelectedItem = false;
                 /**
                  * 索引改变后是否需要抛出事件
-                 * @member egret.gui.ListBase#_dispatchChangeAfterSelection
                  */
                 this._dispatchChangeAfterSelection = false;
                 this._useVirtualLayout = false;
@@ -645,6 +643,6 @@ var egret;
             return ListBase;
         })(gui.SkinnableDataContainer);
         gui.ListBase = ListBase;
-        ListBase.prototype.__class__ = "gui.ListBase";
+        ListBase.prototype.__class__ = "egret.gui.ListBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

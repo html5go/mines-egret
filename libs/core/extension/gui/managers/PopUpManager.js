@@ -166,6 +166,6 @@ var egret;
             return PopUpManager;
         })();
         gui.PopUpManager = PopUpManager;
-        PopUpManager.prototype.__class__ = "gui.PopUpManager";
+        PopUpManager.prototype.__class__ = "egret.gui.PopUpManager";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -70,6 +70,6 @@ var egret;
             return PopUpPosition;
         })();
         gui.PopUpPosition = PopUpPosition;
-        PopUpPosition.prototype.__class__ = "gui.PopUpPosition";
+        PopUpPosition.prototype.__class__ = "egret.gui.PopUpPosition";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

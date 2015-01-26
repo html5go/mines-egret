@@ -70,16 +70,25 @@ var egret;
          * @param content {egret.DisplayObject} 需要滚动的对象
          */
         ScrollView.prototype.setContent = function (content) {
+            if (this._content === content)
+                return;
+            this.removeContent();
+            if (content) {
+                this._content = content;
+                _super.prototype.addChild.call(this, content);
+                this._addEvents();
+            }
+        };
+        /**
+         * 移除滚动的对象
+         * @method egret.ScrollView#removeContent
+         */
+        ScrollView.prototype.removeContent = function () {
             if (this._content) {
                 this._removeEvents();
                 _super.prototype.removeChildAt.call(this, 0);
             }
-            this._content = content;
-            _super.prototype.addChild.call(this, content);
-            this._addEvents();
-            var w = this._explicitWidth || this._getContentWidth();
-            var h = this._explicitHeight || this._getContentHeight();
-            //this.scrollRect = new Rectangle(0, 0, w, h);
+            this._content = null;
         };
         Object.defineProperty(ScrollView.prototype, "verticalScrollPolicy", {
             /**
@@ -126,6 +135,7 @@ var egret;
                 if (value == this._scrollLeft)
                     return;
                 this._scrollLeft = value;
+                this._validatePosition(false, true);
                 this._updateContentPosition();
             },
             enumerable: true,
@@ -144,6 +154,7 @@ var egret;
                 if (value == this._scrollTop)
                     return;
                 this._scrollTop = value;
+                this._validatePosition(true, false);
                 this._updateContentPosition();
             },
             enumerable: true,
@@ -163,14 +174,41 @@ var egret;
             if (!isOffset && this._scrollTop == top && this._scrollLeft == left)
                 return;
             if (isOffset) {
-                this._scrollTop += top;
-                this._scrollLeft += left;
+                var isEdgeV = this._isOnTheEdge(true);
+                var isEdgeH = this._isOnTheEdge(false);
+                this._scrollTop += isEdgeV ? top / 2 : top;
+                this._scrollLeft += isEdgeH ? left / 2 : left;
             }
             else {
                 this._scrollTop = top;
                 this._scrollLeft = left;
             }
+            this._validatePosition(true, true);
             this._updateContentPosition();
+        };
+        ScrollView.prototype._isOnTheEdge = function (isVertical) {
+            if (isVertical === void 0) { isVertical = true; }
+            var top = this._scrollTop, left = this._scrollLeft;
+            if (isVertical)
+                return top < 0 || top > this.getMaxScrollTop();
+            else
+                return left < 0 || left > this.getMaxScrollLeft();
+        };
+        ScrollView.prototype._validatePosition = function (top, left) {
+            if (top === void 0) { top = false; }
+            if (left === void 0) { left = false; }
+            if (top) {
+                var height = this.height;
+                var contentHeight = this._getContentHeight();
+                this._scrollTop = Math.max(this._scrollTop, (0 - height) / 2);
+                this._scrollTop = Math.min(this._scrollTop, contentHeight > height ? (contentHeight - height / 2) : contentHeight / 2);
+            }
+            if (left) {
+                var width = this.width;
+                var contentWidth = this._getContentWidth();
+                this._scrollLeft = Math.max(this._scrollLeft, (0 - width) / 2);
+                this._scrollLeft = Math.min(this._scrollLeft, contentWidth > width ? (contentWidth - width / 2) : contentWidth / 2);
+            }
         };
         /**
          * @inheritDoc
@@ -191,7 +229,10 @@ var egret;
             this._updateContentPosition();
         };
         ScrollView.prototype._updateContentPosition = function () {
-            this.scrollRect = new egret.Rectangle(this._scrollLeft, this._scrollTop, this.width, this.height);
+            var size = this.getBounds(egret.Rectangle.identity);
+            var height = size.height;
+            var width = size.width;
+            this.scrollRect = new egret.Rectangle(this._scrollLeft, this._scrollTop, width, height);
             this.dispatchEvent(new egret.Event(egret.Event.CHANGE));
         };
         ScrollView.prototype._checkScrollPolicy = function () {
@@ -223,6 +264,10 @@ var egret;
         ScrollView.prototype._onTouchBegin = function (e) {
             if (e._isDefaultPrevented)
                 return;
+            var canScroll = this._checkScrollPolicy();
+            if (!canScroll) {
+                return;
+            }
             egret.Tween.removeTweens(this);
             this.stage.addEventListener(egret.TouchEvent.TOUCH_MOVE, this._onTouchMove, this);
             this.stage.addEventListener(egret.TouchEvent.TOUCH_END, this._onTouchEnd, this);
@@ -305,19 +350,23 @@ var egret;
             }
         };
         ScrollView.prototype._onTouchMove = function (event) {
+            if (this._lastTouchPosition.x == event.stageX && this._lastTouchPosition.y == event.stageY)
+                return;
             if (this.delayTouchBeginEvent) {
                 this.delayTouchBeginEvent = null;
                 this.touchBeginTimer.stop();
             }
+            this.touchChildren = false;
             var offset = this._getPointChange(event);
             this.setScrollPosition(offset.y, offset.x, true);
             this._calcVelocitys(event);
             this._logTouchEvent(event);
         };
         ScrollView.prototype._onTouchEnd = function (event) {
-            this.stage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, this._onTouchMove, this);
-            this.stage.removeEventListener(egret.TouchEvent.TOUCH_END, this._onTouchEnd, this);
-            this.stage.removeEventListener(egret.TouchEvent.LEAVE_STAGE, this._onTouchEnd, this);
+            this.touchChildren = true;
+            egret.MainContext.instance.stage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, this._onTouchMove, this);
+            egret.MainContext.instance.stage.removeEventListener(egret.TouchEvent.TOUCH_END, this._onTouchEnd, this);
+            egret.MainContext.instance.stage.removeEventListener(egret.TouchEvent.LEAVE_STAGE, this._onTouchEnd, this);
             this.removeEventListener(egret.Event.ENTER_FRAME, this._onEnterFrame, this);
             this._moveAfterTouchEnd();
         };
@@ -526,6 +575,13 @@ var egret;
          */
         ScrollView.prototype.swapChildrenAt = function (index1, index2) {
             this.throwNotSupportedError();
+        };
+        ScrollView.prototype.hitTest = function (x, y, ignoreTouchEnabled) {
+            if (ignoreTouchEnabled === void 0) { ignoreTouchEnabled = false; }
+            var childTouched = _super.prototype.hitTest.call(this, x, y, ignoreTouchEnabled);
+            if (childTouched)
+                return childTouched;
+            return egret.DisplayObject.prototype.hitTest.call(this, x, y, ignoreTouchEnabled);
         };
         ScrollView.weight = [1, 1.33, 1.66, 2, 2.33];
         return ScrollView;

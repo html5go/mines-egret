@@ -76,6 +76,6 @@ var egret;
             return DefaultAssetAdapter;
         })();
         gui.DefaultAssetAdapter = DefaultAssetAdapter;
-        DefaultAssetAdapter.prototype.__class__ = "gui.DefaultAssetAdapter";
+        DefaultAssetAdapter.prototype.__class__ = "egret.gui.DefaultAssetAdapter";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

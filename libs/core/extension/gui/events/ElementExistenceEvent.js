@@ -80,6 +80,6 @@ var egret;
             return ElementExistenceEvent;
         })(egret.Event);
         gui.ElementExistenceEvent = ElementExistenceEvent;
-        ElementExistenceEvent.prototype.__class__ = "gui.ElementExistenceEvent";
+        ElementExistenceEvent.prototype.__class__ = "egret.gui.ElementExistenceEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

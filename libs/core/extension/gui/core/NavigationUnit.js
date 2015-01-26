@@ -44,6 +44,6 @@ var egret;
             return NavigationUnit;
         })();
         gui.NavigationUnit = NavigationUnit;
-        NavigationUnit.prototype.__class__ = "gui.NavigationUnit";
+        NavigationUnit.prototype.__class__ = "egret.gui.NavigationUnit";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

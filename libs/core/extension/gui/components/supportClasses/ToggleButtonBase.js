@@ -79,14 +79,19 @@ var egret;
              * @returns {string}
              */
             ToggleButtonBase.prototype.getCurrentSkinState = function () {
-                if (!this.selected)
-                    return _super.prototype.getCurrentSkinState.call(this);
-                else
-                    return _super.prototype.getCurrentSkinState.call(this) + "AndSelected";
+                var state = _super.prototype.getCurrentSkinState.call(this);
+                if (!this.selected) {
+                    return state;
+                }
+                else {
+                    var selectedState = state + "AndSelected";
+                    var skin = this.skin;
+                    if (skin && skin.hasState(selectedState)) {
+                        return selectedState;
+                    }
+                    return state == "disabled" ? "disabled" : "down";
+                }
             };
-            /**
-             * @method egret.gui.ToggleButtonBase#buttonReleased
-             */
             ToggleButtonBase.prototype.buttonReleased = function () {
                 _super.prototype.buttonReleased.call(this);
                 if (!this._autoSelected || !this.enabled)
@@ -97,6 +102,6 @@ var egret;
             return ToggleButtonBase;
         })(gui.ButtonBase);
         gui.ToggleButtonBase = ToggleButtonBase;
-        ToggleButtonBase.prototype.__class__ = "gui.ToggleButtonBase";
+        ToggleButtonBase.prototype.__class__ = "egret.gui.ToggleButtonBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

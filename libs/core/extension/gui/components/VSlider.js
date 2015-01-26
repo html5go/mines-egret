@@ -48,10 +48,8 @@ var egret;
              */
             function VSlider() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.VSlider";
             }
             /**
-             * @method egret.gui.VSlider#pointToValue
              * @param x {number}
              * @param y {number}
              * @returns {number}
@@ -64,7 +62,6 @@ var egret;
                 return this.minimum + ((thumbRange != 0) ? ((thumbRange - y) / thumbRange) * range : 0);
             };
             /**
-             * @method egret.gui.VSlider#updateSkinDisplayList
              */
             VSlider.prototype.updateSkinDisplayList = function () {
                 if (!this.thumb || !this.track)
@@ -87,6 +84,6 @@ var egret;
             return VSlider;
         })(gui.SliderBase);
         gui.VSlider = VSlider;
-        VSlider.prototype.__class__ = "gui.VSlider";
+        VSlider.prototype.__class__ = "egret.gui.VSlider";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

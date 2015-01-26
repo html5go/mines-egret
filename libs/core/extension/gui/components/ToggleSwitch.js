@@ -48,11 +48,10 @@ var egret;
              */
             function ToggleSwitch() {
                 _super.call(this);
-                this.hostComponentKey = "egret.gui.ToggleSwitch";
             }
             return ToggleSwitch;
         })(gui.ToggleButtonBase);
         gui.ToggleSwitch = ToggleSwitch;
-        ToggleSwitch.prototype.__class__ = "gui.ToggleSwitch";
+        ToggleSwitch.prototype.__class__ = "egret.gui.ToggleSwitch";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

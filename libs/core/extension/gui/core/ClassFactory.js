@@ -36,16 +36,13 @@ var egret;
     (function (gui) {
         /**
          * @class egret.gui.ClassFactory
-         * @classdesc
+         * @classdesc ClassFactory 实例是一个“工厂对象”，Egret 可用其生成其他类的实例，每个实例拥有相同的属性。
          * @extends egret.HashObject
          */
         var ClassFactory = (function (_super) {
             __extends(ClassFactory, _super);
             /**
              * @method egret.gui.ClassFactory#constructor
-             * @class egret.gui.ClassFactory
-             * @classdesc
-             * ClassFactory 实例是一个“工厂对象”，Egret 可用其生成其他类的实例，每个实例拥有相同的属性。
              * @param generator {any} newInstance() 方法根据工厂对象生成对象时使用的 Class。
              */
             function ClassFactory(generator) {
@@ -65,6 +62,6 @@ var egret;
             return ClassFactory;
         })(egret.HashObject);
         gui.ClassFactory = ClassFactory;
-        ClassFactory.prototype.__class__ = "gui.ClassFactory";
+        ClassFactory.prototype.__class__ = "egret.gui.ClassFactory";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

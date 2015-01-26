@@ -49,7 +49,6 @@ var egret;
             function Panel() {
                 _super.call(this);
                 this._title = "";
-                this.hostComponentKey = "egret.gui.Panel";
                 this.touchEnabled = false;
             }
             Object.defineProperty(Panel.prototype, "title", {
@@ -68,11 +67,6 @@ var egret;
                 enumerable: true,
                 configurable: true
             });
-            /**
-             * @method egret.gui.Panel#partAdded
-             * @param partName {string}
-             * @param instance {any}
-             */
             Panel.prototype.partAdded = function (partName, instance) {
                 _super.prototype.partAdded.call(this, partName, instance);
                 if (instance == this.titleDisplay) {
@@ -82,6 +76,6 @@ var egret;
             return Panel;
         })(gui.SkinnableContainer);
         gui.Panel = Panel;
-        Panel.prototype.__class__ = "gui.Panel";
+        Panel.prototype.__class__ = "egret.gui.Panel";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

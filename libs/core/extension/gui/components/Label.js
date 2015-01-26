@@ -271,9 +271,11 @@ var egret;
              * 使用指定的宽度进行测量
              */
             Label.prototype.measureUsingWidth = function (w) {
-                var originalText = this._textField.text;
                 if (this._textChanged) {
                     this._textField.text = this._text;
+                }
+                if (this._textFlowChanged) {
+                    this._textField.textFlow = this._textFlow;
                 }
                 var padding = isNaN(this._padding) ? 0 : this._padding;
                 var paddingL = isNaN(this._paddingLeft) ? padding : this._paddingLeft;
@@ -298,7 +300,6 @@ var egret;
                 }
                 this.measuredWidth += paddingL + paddingR;
                 this.measuredHeight += paddingT + paddingB;
-                this._textField.text = originalText;
             };
             /**
              * @method egret.gui.Label#updateDisplayList
@@ -343,6 +344,6 @@ var egret;
             return Label;
         })(gui.TextBase);
         gui.Label = Label;
-        Label.prototype.__class__ = "gui.Label";
+        Label.prototype.__class__ = "egret.gui.Label";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

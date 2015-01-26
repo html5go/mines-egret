@@ -227,6 +227,6 @@ var egret;
             return SliderBase;
         })(gui.TrackBase);
         gui.SliderBase = SliderBase;
-        SliderBase.prototype.__class__ = "gui.SliderBase";
+        SliderBase.prototype.__class__ = "egret.gui.SliderBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -431,6 +431,6 @@ var egret;
             return PopUpAnchor;
         })(gui.UIComponent);
         gui.PopUpAnchor = PopUpAnchor;
-        PopUpAnchor.prototype.__class__ = "gui.PopUpAnchor";
+        PopUpAnchor.prototype.__class__ = "egret.gui.PopUpAnchor";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

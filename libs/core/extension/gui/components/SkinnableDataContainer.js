@@ -53,7 +53,6 @@ var egret;
                  * dataGroup发生改变时传递的参数
                  */
                 this._dataGroupProperties = {};
-                this.hostComponentKey = "egret.gui.SkinnableDataContainer";
             }
             /**
              * @method egret.gui.SkinnableDataContainer#updateRenderer
@@ -306,6 +305,6 @@ var egret;
             return SkinnableDataContainer;
         })(gui.SkinnableComponent);
         gui.SkinnableDataContainer = SkinnableDataContainer;
-        SkinnableDataContainer.prototype.__class__ = "gui.SkinnableDataContainer";
+        SkinnableDataContainer.prototype.__class__ = "egret.gui.SkinnableDataContainer";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

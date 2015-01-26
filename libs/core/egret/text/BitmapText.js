@@ -47,6 +47,8 @@ var egret;
              */
             this._text = "";
             this._textChanged = false;
+            this._spriteSheet = null;
+            this._spriteSheetChanged = false;
             this._bitmapPool = [];
         }
         Object.defineProperty(BitmapText.prototype, "text", {
@@ -67,11 +69,29 @@ var egret;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(BitmapText.prototype, "spriteSheet", {
+            /**
+             * BitmapTextSpriteSheet对象，缓存了所有文本的位图纹理
+             * @member {egret.BitmapTextSpriteSheet} egret.BitmapText#spriteSheet
+             */
+            get: function () {
+                return this._spriteSheet;
+            },
+            set: function (val) {
+                if (this._spriteSheet == val)
+                    return;
+                this._spriteSheet = val;
+                this._spriteSheetChanged = true;
+                this._setSizeDirty();
+            },
+            enumerable: true,
+            configurable: true
+        });
         BitmapText.prototype._updateTransform = function () {
             if (!this.visible) {
                 return;
             }
-            if (this._textChanged) {
+            if (this._textChanged || this._spriteSheetChanged) {
                 this._renderText();
             }
             _super.prototype._updateTransform.call(this);
@@ -81,7 +101,7 @@ var egret;
             if (forMeasureContentSize === void 0) { forMeasureContentSize = false; }
             var tempW = 0;
             var tempH = 0;
-            if (this._textChanged) {
+            if (this._textChanged || this._spriteSheetChanged) {
                 this.removeChildren();
             }
             for (var i = 0, l = this.text.length; i < l; i++) {
@@ -94,7 +114,7 @@ var egret;
                 var offsetX = texture._offsetX;
                 var offsetY = texture._offsetY;
                 var characterWidth = texture._textureWidth;
-                if (this._textChanged) {
+                if (this._textChanged || this._spriteSheetChanged) {
                     var bitmap = this._bitmapPool[i];
                     if (!bitmap) {
                         bitmap = new egret.Bitmap();
@@ -110,6 +130,7 @@ var egret;
                 }
             }
             this._textChanged = false;
+            this._spriteSheetChanged = false;
             var rect = egret.Rectangle.identity.initialize(0, 0, tempW, tempH);
             return rect;
         };

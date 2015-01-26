@@ -211,7 +211,6 @@ var egret;
             });
             Object.defineProperty(UIStage.prototype, "scaleY", {
                 /**
-                 * @member egret.gui.UIStage#scaleY
                  */
                 get: function () {
                     return this._scaleY;
@@ -228,7 +227,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.UIStage#setActualSize
              * @param w {number}
              * @param h {number}
              */
@@ -238,7 +236,6 @@ var egret;
                 _super.prototype.setActualSize.call(this, w, h);
             };
             /**
-             * @method egret.gui.UIStage#setLayoutBoundsPosition
              * @param x {number}
              * @param y {number}
              */
@@ -248,7 +245,6 @@ var egret;
                 _super.prototype.setLayoutBoundsPosition.call(this, x, y);
             };
             /**
-             * @method egret.gui.UIStage#setLayoutBoundsSize
              * @param layoutWidth {number}
              * @param layoutHeight {number}
              */
@@ -377,7 +373,6 @@ var egret;
             //                                复写容器操作方法
             //==========================================================================
             /**
-             * @method egret.gui.UIStage#addElement
              * @param element {IVisualElement}
              * @returns {IVisualElement}
              */
@@ -388,7 +383,6 @@ var egret;
                 return this.addElementAt(element, addIndex);
             };
             /**
-             * @method egret.gui.UIStage#addElementAt
              * @param element {IVisualElement}
              * @param index {number}
              * @returns {IVisualElement}
@@ -416,7 +410,6 @@ var egret;
                 return _super.prototype.addElementAt.call(this, element, index);
             };
             /**
-             * @method egret.gui.UIStage#removeElement
              * @param element {IVisualElement}
              * @returns {IVisualElement}
              */
@@ -424,7 +417,6 @@ var egret;
                 return this.removeElementAt(_super.prototype.getElementIndex.call(this, element));
             };
             /**
-             * @method egret.gui.UIStage#removeElementAt
              * @param index {number}
              * @returns {IVisualElement}
              */
@@ -441,7 +433,6 @@ var egret;
                 return element;
             };
             /**
-             * @method egret.gui.UIStage#removeAllElements
              */
             UIStage.prototype.removeAllElements = function () {
                 while (this._noTopMostIndex > 0) {
@@ -450,7 +441,6 @@ var egret;
                 }
             };
             /**
-             * @method egret.gui.UIStage#_elementRemoved
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -515,6 +505,6 @@ var egret;
             return UIStage;
         })(gui.Group);
         gui.UIStage = UIStage;
-        UIStage.prototype.__class__ = "gui.UIStage";
+        UIStage.prototype.__class__ = "egret.gui.UIStage";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

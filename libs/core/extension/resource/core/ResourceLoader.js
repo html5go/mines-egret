@@ -57,6 +57,13 @@ var RES;
              */
             this.itemListDic = {};
             /**
+             * 加载失败的组,key为groupName
+             */
+            this.groupErrorDic = {};
+            this.retryTimesDic = {};
+            this.maxRetryTimes = 3;
+            this.failedList = new Array();
+            /**
              * 优先级队列,key为priority，value为groupName列表
              */
             this.priorityQueue = {};
@@ -95,7 +102,7 @@ var RES;
                 return;
             if (!list || list.length == 0) {
                 egret.Logger.warning("RES加载了不存在或空的资源组：\"" + groupName + "\"");
-                var event = new RES.ResourceEvent(RES.ResourceEvent.GROUP_COMPLETE);
+                var event = new RES.ResourceEvent(RES.ResourceEvent.GROUP_LOAD_ERROR);
                 event.groupName = groupName;
                 this.dispatchEvent(event);
                 return;
@@ -149,6 +156,8 @@ var RES;
          * 获取下一个待加载项
          */
         ResourceLoader.prototype.getOneResourceItem = function () {
+            if (this.failedList.length > 0)
+                return this.failedList.shift();
             var maxPriority = Number.NEGATIVE_INFINITY;
             for (var p in this.priorityQueue) {
                 maxPriority = Math.max(maxPriority, p);
@@ -181,19 +190,39 @@ var RES;
             this.loadingCount--;
             var groupName = resItem.groupName;
             if (!resItem.loaded) {
-                RES.ResourceEvent.dispatchResourceEvent(this.resInstance, RES.ResourceEvent.ITEM_LOAD_ERROR, groupName, resItem);
+                var times = this.retryTimesDic[resItem.name] || 1;
+                if (times > this.maxRetryTimes) {
+                    delete this.retryTimesDic[resItem.name];
+                    RES.ResourceEvent.dispatchResourceEvent(this.resInstance, RES.ResourceEvent.ITEM_LOAD_ERROR, groupName, resItem);
+                }
+                else {
+                    this.retryTimesDic[resItem.name] = times + 1;
+                    this.failedList.push(resItem);
+                    this.next();
+                    return;
+                }
             }
             if (groupName) {
                 this.numLoadedDic[groupName]++;
                 var itemsLoaded = this.numLoadedDic[groupName];
                 var itemsTotal = this.groupTotalDic[groupName];
+                if (!resItem.loaded) {
+                    this.groupErrorDic[groupName] = true;
+                }
                 RES.ResourceEvent.dispatchResourceEvent(this.resInstance, RES.ResourceEvent.GROUP_PROGRESS, groupName, resItem, itemsLoaded, itemsTotal);
                 if (itemsLoaded == itemsTotal) {
+                    var groupError = this.groupErrorDic[groupName];
                     this.removeGroupName(groupName);
                     delete this.groupTotalDic[groupName];
                     delete this.numLoadedDic[groupName];
                     delete this.itemListDic[groupName];
-                    RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, groupName);
+                    delete this.groupErrorDic[groupName];
+                    if (groupError) {
+                        RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_LOAD_ERROR, groupName);
+                    }
+                    else {
+                        RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, groupName);
+                    }
                 }
             }
             else {

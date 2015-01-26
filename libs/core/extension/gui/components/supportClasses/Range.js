@@ -284,6 +284,6 @@ var egret;
             return Range;
         })(gui.SkinnableComponent);
         gui.Range = Range;
-        Range.prototype.__class__ = "gui.Range";
+        Range.prototype.__class__ = "egret.gui.Range";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

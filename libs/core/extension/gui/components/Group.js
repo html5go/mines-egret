@@ -272,7 +272,6 @@ var egret;
             };
             /**
              * 添加一个显示元素到容器
-             * @method egret.gui.Group#_elementAdded
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -292,7 +291,6 @@ var egret;
             };
             /**
              * 从容器移除一个显示元素
-             * @method egret.gui.Group#_elementRemoved
              * @param element {IVisualElement}
              * @param index {number}
              * @param notifyListeners {boolean}
@@ -311,7 +309,6 @@ var egret;
                 this.invalidateDisplayList();
             };
             /**
-             * @method egret.gui.Group#addChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -320,7 +317,6 @@ var egret;
                 throw (new Error("addChild()" + Group.errorStr + "addElement()代替"));
             };
             /**
-             * @method egret.gui.Group#addChildAt
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -330,7 +326,6 @@ var egret;
                 throw (new Error("addChildAt()" + Group.errorStr + "addElementAt()代替"));
             };
             /**
-             * @method egret.gui.Group#removeChild
              * @deprecated
              * @param child {DisplayObject}
              * @returns {DisplayObject}
@@ -348,7 +343,6 @@ var egret;
                 throw (new Error("removeChildAt()" + Group.errorStr + "removeElementAt()代替"));
             };
             /**
-             * @method egret.gui.Group#setChildIndex
              * @deprecated
              * @param child {DisplayObject}
              * @param index {number}
@@ -357,7 +351,6 @@ var egret;
                 throw (new Error("setChildIndex()" + Group.errorStr + "setElementIndex()代替"));
             };
             /**
-             * @method egret.gui.Group#swapChildren
              * @deprecated
              * @param child1 {DisplayObject}
              * @param child2 {DisplayObject}
@@ -378,6 +371,6 @@ var egret;
             return Group;
         })(gui.GroupBase);
         gui.Group = Group;
-        Group.prototype.__class__ = "gui.Group";
+        Group.prototype.__class__ = "egret.gui.Group";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

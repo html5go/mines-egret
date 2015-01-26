@@ -51,7 +51,6 @@ var egret;
                 this._firstButtonLabel = "";
                 this._secondButtonLabel = "";
                 this._contentText = "";
-                this.hostComponentKey = "egret.gui.Alert";
             }
             /**
              * 弹出Alert控件的静态方法。在Alert控件中选择一个按钮，将关闭该控件。
@@ -220,6 +219,6 @@ var egret;
             return Alert;
         })(gui.TitleWindow);
         gui.Alert = Alert;
-        Alert.prototype.__class__ = "gui.Alert";
+        Alert.prototype.__class__ = "egret.gui.Alert";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

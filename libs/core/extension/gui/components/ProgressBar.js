@@ -51,7 +51,6 @@ var egret;
                 this._direction = gui.ProgressBarDirection.LEFT_TO_RIGHT;
                 this.animationValue = 0;
                 this.trackResizedOrMoved = false;
-                this.hostComponentKey = "egret.gui.ProgressBar";
             }
             Object.defineProperty(ProgressBar.prototype, "labelFunction", {
                 /**
@@ -186,11 +185,6 @@ var egret;
                 _super.prototype.updateDisplayList.call(this, unscaledWidth, unscaledHeight);
                 this.updateSkinDisplayList();
             };
-            /**
-             * @method egret.gui.ProgressBar#partAdded
-             * @param partName {string}
-             * @param instance {any}
-             */
             ProgressBar.prototype.partAdded = function (partName, instance) {
                 if (instance == this.track) {
                     if (this.track instanceof gui.UIComponent) {
@@ -199,11 +193,6 @@ var egret;
                     }
                 }
             };
-            /**
-             * @method egret.gui.ProgressBar#partRemoved
-             * @param partName {string}
-             * @param instance {any}
-             */
             ProgressBar.prototype.partRemoved = function (partName, instance) {
                 if (instance == this.track) {
                     if (this.track instanceof gui.UIComponent) {
@@ -219,9 +208,6 @@ var egret;
                 this.trackResizedOrMoved = true;
                 this.invalidateProperties();
             };
-            /**
-             * @method egret.gui.ProgressBar#commitProperties
-             */
             ProgressBar.prototype.commitProperties = function () {
                 _super.prototype.commitProperties.call(this);
                 if (this.trackResizedOrMoved) {
@@ -291,6 +277,6 @@ var egret;
             return ProgressBar;
         })(gui.Range);
         gui.ProgressBar = ProgressBar;
-        ProgressBar.prototype.__class__ = "gui.ProgressBar";
+        ProgressBar.prototype.__class__ = "egret.gui.ProgressBar";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

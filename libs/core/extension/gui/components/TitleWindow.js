@@ -49,7 +49,6 @@ var egret;
                 _super.call(this);
                 this._showCloseButton = true;
                 this._autoBackToStage = true;
-                this.hostComponentKey = "egret.gui.TitleWindow";
                 this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onWindowMouseDown, this, true, 100);
             }
             /**
@@ -95,7 +94,6 @@ var egret;
                 configurable: true
             });
             /**
-             * @method egret.gui.TitleWindow#partAdded
              * @param partName {string}
              * @param instance {any}
              */
@@ -196,6 +194,6 @@ var egret;
             return TitleWindow;
         })(gui.Panel);
         gui.TitleWindow = TitleWindow;
-        TitleWindow.prototype.__class__ = "gui.TitleWindow";
+        TitleWindow.prototype.__class__ = "egret.gui.TitleWindow";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

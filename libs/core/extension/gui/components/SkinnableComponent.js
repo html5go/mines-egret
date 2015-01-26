@@ -42,7 +42,7 @@ var egret;
          * 并将皮肤的属性引用赋值到此类定义的同名属性(必须没有默认值)上,
          * 如果要对公共属性添加事件监听或其他操作，
          * 请覆盖partAdded()和partRemoved()方法
-         * @extends egret.gui.SkinnableComponent
+         * @extends egret.gui.UIComponent
          */
         var SkinnableComponent = (function (_super) {
             __extends(SkinnableComponent, _super);
@@ -57,7 +57,7 @@ var egret;
                  * 用户自定义的组件若不对此属性赋值，将会继承父级的标识符定义。
                  * @member {string} egret.gui.SkinnableComponent#hostComponentKey
                  */
-                this.hostComponentKey = "egret.gui.SkinnableComponent";
+                this.hostComponentKey = null;
                 /**
                  * 外部显式设置了皮肤名
                  */
@@ -113,7 +113,8 @@ var egret;
                 if (!adapter) {
                     adapter = this.getSkinAdapter();
                 }
-                var skin = adapter.getSkin(this._skinName, this.hostComponentKey);
+                var key = this.hostComponentKey || egret.getQualifiedClassName(this);
+                var skin = adapter.getSkin(this._skinName, key);
                 if (!skin) {
                     var theme = SkinnableComponent._defaultTheme;
                     if (theme) {
@@ -490,6 +491,6 @@ var egret;
             return SkinnableComponent;
         })(gui.UIComponent);
         gui.SkinnableComponent = SkinnableComponent;
-        SkinnableComponent.prototype.__class__ = "gui.SkinnableComponent";
+        SkinnableComponent.prototype.__class__ = "egret.gui.SkinnableComponent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

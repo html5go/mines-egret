@@ -43,13 +43,9 @@ var egret;
          */
         var TabBarButton = (function (_super) {
             __extends(TabBarButton, _super);
-            /**
-             * @method egret.gui.TabBarButton#constructor
-             */
             function TabBarButton() {
                 _super.call(this);
                 this._allowDeselection = true;
-                this.hostComponentKey = "egret.gui.TabBarButton";
             }
             Object.defineProperty(TabBarButton.prototype, "allowDeselection", {
                 /**
@@ -103,9 +99,6 @@ var egret;
                         this.labelDisplay.text = this._getLabel();
                 }
             };
-            /**
-             * @method egret.gui.TabBarButton#buttonReleased
-             */
             TabBarButton.prototype.buttonReleased = function () {
                 if (this.selected && !this.allowDeselection)
                     return;
@@ -114,6 +107,6 @@ var egret;
             return TabBarButton;
         })(gui.ToggleButtonBase);
         gui.TabBarButton = TabBarButton;
-        TabBarButton.prototype.__class__ = "gui.TabBarButton";
+        TabBarButton.prototype.__class__ = "egret.gui.TabBarButton";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

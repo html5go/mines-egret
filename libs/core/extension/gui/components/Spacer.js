@@ -53,6 +53,6 @@ var egret;
             return Spacer;
         })(gui.UIComponent);
         gui.Spacer = Spacer;
-        Spacer.prototype.__class__ = "gui.Spacer";
+        Spacer.prototype.__class__ = "egret.gui.Spacer";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

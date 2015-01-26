@@ -48,31 +48,71 @@ var egret;
              */
             function TextBase() {
                 _super.call(this);
+                this.allStyleChanged = false;
                 this._fontFamily = "SimSun";
                 this._size = 30;
                 this._focusEnabled = true;
+                this._bold = false;
+                this._italic = false;
                 this._textAlign = egret.HorizontalAlign.LEFT;
                 this._verticalAlign = egret.VerticalAlign.TOP;
                 this._lineSpacing = 0;
                 this._textColor = 0xFFFFFF;
                 this._text = "";
+                this._textFlow = null;
+                this._textFlowChanged = false;
+                this._hasNoStyleChild = true;
             }
+            TextBase.prototype.styleChanged = function (styleProp) {
+                if (this.allStyleChanged) {
+                    return;
+                }
+                if (styleProp) {
+                    switch (styleProp) {
+                        case "textColor":
+                            this.textColorChanged = true;
+                            break;
+                        case "fontFamily":
+                            this.fontFamilyChanged = true;
+                            break;
+                        case "size":
+                            this._sizeChanged = true;
+                            break;
+                        case "bold":
+                            this.boldChanged = true;
+                            break;
+                        case "italic":
+                            this.italicChanged = true;
+                            break;
+                        case "textAlign":
+                            this.textAlignChanged = true;
+                            break;
+                        case "verticalAlign":
+                            this.verticalAlignChanged = true;
+                            break;
+                    }
+                }
+                else {
+                    this.allStyleChanged = true;
+                }
+                this.invalidateProperties();
+                this.invalidateSize();
+                this.invalidateDisplayList();
+            };
             Object.defineProperty(TextBase.prototype, "fontFamily", {
                 /**
                  * 字体名称 。默认值：SimSun
                  * @member egret.gui.TextBase#fontFamily
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["fontFamily"] !== undefined) {
+                        return chain["fontFamily"];
+                    }
                     return this._fontFamily;
                 },
                 set: function (value) {
-                    if (this._fontFamily == value)
-                        return;
-                    this._fontFamily = value;
-                    this.fontFamilyChanged = true;
-                    this.invalidateProperties();
-                    this.invalidateSize();
-                    this.invalidateDisplayList();
+                    this.setStyle("fontFamily", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -83,26 +123,20 @@ var egret;
                  * @member egret.gui.TextBase#size
                  */
                 get: function () {
-                    return this._getFontSize();
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["size"] !== undefined) {
+                        return chain["size"];
+                    }
+                    return this._size;
                 },
                 set: function (value) {
-                    this._setFontSize(value);
+                    if (value === undefined)
+                        value = 0;
+                    this.setStyle("size", value);
                 },
                 enumerable: true,
                 configurable: true
             });
-            TextBase.prototype._getFontSize = function () {
-                return this._size;
-            };
-            TextBase.prototype._setFontSize = function (value) {
-                if (this._size == value)
-                    return;
-                this._size = value;
-                this._sizeChanged = true;
-                this.invalidateProperties();
-                this.invalidateSize();
-                this.invalidateDisplayList();
-            };
             Object.defineProperty(TextBase.prototype, "focusEnabled", {
                 get: function () {
                     return this._focusEnabled;
@@ -130,16 +164,14 @@ var egret;
                  * @member egret.gui.TextBase#bold
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["bold"] !== undefined) {
+                        return chain["bold"];
+                    }
                     return this._bold;
                 },
                 set: function (value) {
-                    if (this._bold == value)
-                        return;
-                    this._bold = value;
-                    this.boldChanged = true;
-                    this.invalidateProperties();
-                    this.invalidateSize();
-                    this.invalidateDisplayList();
+                    this.setStyle("bold", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -150,16 +182,14 @@ var egret;
                  * @member egret.gui.TextBase#italic
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["italic"] !== undefined) {
+                        return chain["italic"];
+                    }
                     return this._italic;
                 },
                 set: function (value) {
-                    if (this._italic == value)
-                        return;
-                    this._italic = value;
-                    this.italicChanged = true;
-                    this.invalidateProperties();
-                    this.invalidateSize();
-                    this.invalidateDisplayList();
+                    this.setStyle("italic", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -171,16 +201,14 @@ var egret;
                  * @member egret.gui.TextBase#textAlign
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["textAlign"] !== undefined) {
+                        return chain["textAlign"];
+                    }
                     return this._textAlign;
                 },
                 set: function (value) {
-                    if (this._textAlign == value)
-                        return;
-                    this._textAlign = value;
-                    this.textAlignChanged = true;
-                    this.invalidateProperties();
-                    this.invalidateSize();
-                    this.invalidateDisplayList();
+                    this.setStyle("textAlign", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -192,16 +220,14 @@ var egret;
                  * @member egret.gui.TextBase#verticalAlign
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["verticalAlign"] !== undefined) {
+                        return chain["verticalAlign"];
+                    }
                     return this._verticalAlign;
                 },
                 set: function (value) {
-                    if (this._verticalAlign == value)
-                        return;
-                    this._verticalAlign = value;
-                    this.verticalAlignChanged = true;
-                    this.invalidateProperties();
-                    this.invalidateSize();
-                    this.invalidateDisplayList();
+                    this.setStyle("verticalAlign", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -237,14 +263,14 @@ var egret;
                  * @member egret.gui.TextBase#textColor
                  */
                 get: function () {
+                    var chain = this._styleProtoChain;
+                    if (chain && chain["textColor"] !== undefined) {
+                        return chain["textColor"];
+                    }
                     return this._textColor;
                 },
                 set: function (value) {
-                    if (this._textColor == value)
-                        return;
-                    this._textColor = value;
-                    this.textColorChanged = true;
-                    this.invalidateProperties();
+                    this.setStyle("textColor", value);
                 },
                 enumerable: true,
                 configurable: true
@@ -261,8 +287,10 @@ var egret;
                 set: function (value) {
                     if (value == this._text)
                         return;
-                    this._text = value;
+                    this._text = value || "";
                     this._textChanged = true;
+                    this._textFlow = null;
+                    this._textFlowChanged = false;
                     this.invalidateProperties();
                     this.invalidateSize();
                     this.invalidateDisplayList();
@@ -270,45 +298,67 @@ var egret;
                 enumerable: true,
                 configurable: true
             });
-            /**
-             * @method egret.gui.TextBase#createChildren
-             */
+            Object.defineProperty(TextBase.prototype, "textFlow", {
+                get: function () {
+                    if (this._textField)
+                        return this._textField.textFlow;
+                    return this._textFlow;
+                },
+                set: function (value) {
+                    this._textFlow = value || [];
+                    this._textFlowChanged = true;
+                    this._text = null;
+                    this._textChanged = false;
+                    this.invalidateProperties();
+                    this.invalidateSize();
+                    this.invalidateDisplayList();
+                },
+                enumerable: true,
+                configurable: true
+            });
             TextBase.prototype.createChildren = function () {
                 _super.prototype.createChildren.call(this);
                 if (!this._textField) {
                     this.checkTextField();
                 }
             };
-            /**
-             * @method egret.gui.TextBase#commitProperties
-             */
             TextBase.prototype.commitProperties = function () {
                 _super.prototype.commitProperties.call(this);
                 if (!this._textField) {
                     this.checkTextField();
                 }
+                if (this.allStyleChanged) {
+                    this.allStyleChanged = false;
+                    this.textColorChanged = true;
+                    this.fontFamilyChanged = true;
+                    this._sizeChanged = true;
+                    this.boldChanged = true;
+                    this.italicChanged = true;
+                    this.textAlignChanged = true;
+                    this.verticalAlignChanged = true;
+                }
                 if (this.fontFamilyChanged) {
-                    this._textField.fontFamily = this._fontFamily;
+                    this._textField.fontFamily = this.fontFamily;
                     this.fontFamilyChanged = false;
                 }
                 if (this._sizeChanged) {
-                    this._textField.size = this._size;
+                    this._textField.size = this.size;
                     this._sizeChanged = false;
                 }
                 if (this.boldChanged) {
-                    this._textField.bold = this._bold;
+                    this._textField.bold = this.bold;
                     this.boldChanged = false;
                 }
                 if (this.italic) {
-                    this._textField.italic = this._italic;
+                    this._textField.italic = this.italic;
                     this.italicChanged = false;
                 }
                 if (this.textAlignChanged) {
-                    this._textField.textAlign = this._textAlign;
+                    this._textField.textAlign = this.textAlign;
                     this.textAlignChanged = false;
                 }
                 if (this.verticalAlignChanged) {
-                    this._textField.verticalAlign = this._verticalAlign;
+                    this._textField.verticalAlign = this.verticalAlign;
                     this.verticalAlignChanged = false;
                 }
                 if (this.lineSpacingChanged) {
@@ -316,12 +366,16 @@ var egret;
                     this.lineSpacingChanged = false;
                 }
                 if (this.textColorChanged) {
-                    this._textField.textColor = this._textColor;
+                    this._textField.textColor = this.textColor;
                     this.textColorChanged = false;
                 }
                 if (this._textChanged) {
                     this._textField.text = this._text;
                     this._textChanged = false;
+                }
+                if (this._textFlowChanged) {
+                    this._textField.textFlow = this._textFlow;
+                    this._textFlowChanged = false;
                 }
             };
             /**
@@ -330,25 +384,28 @@ var egret;
             TextBase.prototype.checkTextField = function () {
                 if (!this._textField) {
                     this._createTextField();
-                    this._textField.text = this._text;
-                    this._textChanged = true;
+                    if (this._text) {
+                        this._textField.text = this._text;
+                        this._textChanged = true;
+                    }
+                    if (this._textFlow) {
+                        this._textField.textFlow = this._textFlow;
+                        this._textFlowChanged = true;
+                    }
                     this.invalidateProperties();
                 }
             };
             TextBase.prototype._createTextField = function () {
                 this._textField = new egret.TextField;
-                this._textField.fontFamily = this._fontFamily;
-                this._textField.size = this._size;
-                this._textField.textAlign = this._textAlign;
-                this._textField.verticalAlign = this._verticalAlign;
+                this._textField.fontFamily = this.fontFamily;
+                this._textField.size = this.size;
+                this._textField.textAlign = this.textAlign;
+                this._textField.verticalAlign = this.verticalAlign;
                 this._textField.lineSpacing = this._lineSpacing;
-                this._textField.textColor = this._textColor;
+                this._textField.textColor = this.textColor;
                 this._textField.multiline = true;
                 this._addToDisplayList(this._textField);
             };
-            /**
-             * @method egret.gui.TextBase#measure
-             */
             TextBase.prototype.measure = function () {
                 _super.prototype.measure.call(this);
                 this.measuredWidth = TextBase.DEFAULT_MEASURED_WIDTH;
@@ -356,7 +413,6 @@ var egret;
             };
             /**
              * 更新显示列表
-             * @method egret.gui.TextBase#$updateDisplayList
              * @param unscaledWidth {number}
              * @param unscaledHeight {number}
              */
@@ -364,7 +420,6 @@ var egret;
                 _super.prototype.updateDisplayList.call(this, unscaledWidth, unscaledHeight);
             };
             /**
-             * @method egret.gui.TextBase#updateDisplayList
              * @param unscaledWidth {number}
              * @param unscaledHeight {number}
              */
@@ -390,6 +445,6 @@ var egret;
             return TextBase;
         })(gui.UIComponent);
         gui.TextBase = TextBase;
-        TextBase.prototype.__class__ = "gui.TextBase";
+        TextBase.prototype.__class__ = "egret.gui.TextBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

@@ -85,6 +85,6 @@ var egret;
             return CollectionEventKind;
         })();
         gui.CollectionEventKind = CollectionEventKind;
-        CollectionEventKind.prototype.__class__ = "gui.CollectionEventKind";
+        CollectionEventKind.prototype.__class__ = "egret.gui.CollectionEventKind";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

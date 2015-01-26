@@ -341,6 +341,6 @@ var egret;
             return TrackBase;
         })(gui.Range);
         gui.TrackBase = TrackBase;
-        TrackBase.prototype.__class__ = "gui.TrackBase";
+        TrackBase.prototype.__class__ = "egret.gui.TrackBase";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

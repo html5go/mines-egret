@@ -97,6 +97,6 @@ var egret;
             return TreeEvent;
         })(egret.Event);
         gui.TreeEvent = TreeEvent;
-        TreeEvent.prototype.__class__ = "gui.TreeEvent";
+        TreeEvent.prototype.__class__ = "egret.gui.TreeEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

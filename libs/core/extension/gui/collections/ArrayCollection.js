@@ -265,6 +265,6 @@ var egret;
             return ArrayCollection;
         })(egret.EventDispatcher);
         gui.ArrayCollection = ArrayCollection;
-        ArrayCollection.prototype.__class__ = "gui.ArrayCollection";
+        ArrayCollection.prototype.__class__ = "egret.gui.ArrayCollection";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

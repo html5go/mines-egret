@@ -59,6 +59,6 @@ var egret;
             return ProgressBarDirection;
         })();
         gui.ProgressBarDirection = ProgressBarDirection;
-        ProgressBarDirection.prototype.__class__ = "gui.ProgressBarDirection";
+        ProgressBarDirection.prototype.__class__ = "egret.gui.ProgressBarDirection";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));

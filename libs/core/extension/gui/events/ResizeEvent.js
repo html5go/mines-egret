@@ -79,6 +79,6 @@ var egret;
             return ResizeEvent;
         })(egret.Event);
         gui.ResizeEvent = ResizeEvent;
-        ResizeEvent.prototype.__class__ = "gui.ResizeEvent";
+        ResizeEvent.prototype.__class__ = "egret.gui.ResizeEvent";
     })(gui = egret.gui || (egret.gui = {}));
 })(egret || (egret = {}));
