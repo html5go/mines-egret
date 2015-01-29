@@ -42,6 +42,7 @@ module mineGame {
     // 创建游戏主界面
     private guiLayer:egret.gui.UIStage;
     private gameIndex:egret.DisplayObjectContainer;
+    private backIndex: egret.TextField;
     private createGameIndex() {
       // 游戏主界面
       this.gameIndex = new egret.DisplayObjectContainer();
@@ -50,7 +51,7 @@ module mineGame {
       // 游戏标题
       var gameTitle:egret.TextField;
       gameTitle = new egret.TextField();
-      gameTitle.text = "放开那地雷";
+      gameTitle.text = "扫雷工兵之\n我叫独行侠";
       gameTitle.textColor = 0x000000;
       gameTitle.y = 80;
       gameTitle.width = 480;
@@ -75,6 +76,12 @@ module mineGame {
         .to({width:76, height:76}, 400)
         .to({width:80, height:80}, 300)
         .wait(1000);
+
+      this.backIndex = new egret.TextField();
+      this.backIndex.text = "< 返回";
+      this.backIndex.textColor = 0x000000;
+      this.backIndex.addEventListener(egret.TouchEvent.TOUCH_TAP,
+            this.backGameIndex, this);
     }
 
     /**
@@ -96,13 +103,13 @@ module mineGame {
       var btn:egret.gui.Button = new egret.gui.Button();
       btn.width = 200;
       btn.height = 60;
-      btn.label = "记忆模式";
+      btn.label = "过目不忘";
       this.modeGroup.addElement(btn);
 
       var btn2:egret.gui.Button = new egret.gui.Button();
       btn2.width = 200;
       btn2.height = 60;
-      btn2.label = "探索模式";
+      btn2.label = "残图寻宝";
       this.modeGroup.addElement(btn2);
 
       var vLayout:egret.gui.VerticalLayout = new egret.gui.VerticalLayout();
@@ -116,9 +123,19 @@ module mineGame {
     }
 
     // 隐藏游戏主界面及菜单
+    // 显示返回按钮
     private removeGameIndex() {
+     
       this.removeChild(this.gameIndex);
       this.removeChild(this.guiLayer);
+      this.addChild(this.backIndex);
+    }
+
+    // 返回游戏主界面及菜单
+    private backGameIndex() {
+      console.log('back index');
+      this.createGameMenu();
+      this.removeChild(this.map);
     }
 
     /**
@@ -131,13 +148,11 @@ module mineGame {
 
       msg = modeType.label;
 
-      if (msg == '探索模式') {
+      if (msg == '残图寻宝') {
         egret.gui.Alert.show( msg + "正在开发中,敬请期待！", "来自哪呢");
       } else {
         this.map = new mineGame.Map();
         this.map.init();
-        this.map.x = 50;
-        this.map.y = 80;
         this.addChild(this.map);
 
         this.removeGameIndex();

@@ -320,6 +320,16 @@
 				"isFolder":false,
 				"key":"minesImage",
 				"name":"minesImage"
+			},
+			{
+				"isFolder":false,
+				"key":"mapImage",
+				"name":"mapImage"
+			},
+			{
+				"isFolder":false,
+				"key":"crosserImage",
+				"name":"crosserImage"
 			}]
 		}
 	},
